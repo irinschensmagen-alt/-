@@ -3,72 +3,202 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конструктор игр: Deutsch interaktiv</title>
+    <title>Garden Game Editor - Deutsch interaktiv</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --primary: #4f46e5; --bg: #f3f4f6; }
-        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        /* Стили для Логотипа */
-        .header-branding { text-align: center; margin-bottom: 20px; }
-        .logo-img { 
-            width: 150px; 
-            height: 150px; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            border: 4px solid var(--primary);
-            transition: transform 0.3s ease;
-            cursor: pointer;
+        :root {
+            --primary: #4CAF50; /* Зеленый садовый */
+            --accent: #FF4081;
+            --dark: #2E3440;
+            --light: #F8F9FA;
+            --glass: rgba(255, 255, 255, 0.95);
         }
-        .logo-img:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(79, 70, 229, 0.4); }
-        .brand-link { text-decoration: none; display: inline-block; }
 
-        h1 { text-align: center; color: var(--primary); margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #666; margin-bottom: 30px; font-style: italic; }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            margin: 0;
+            padding: 20px;
+            color: var(--dark);
+            /* Важно для Genially: разрешаем скролл */
+            overflow-y: auto; 
+            min-height: 100vh;
+        }
 
-        .section { margin-bottom: 30px; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; }
-        .section h2 { margin-top: 0; font-size: 1.2rem; color: #1f2937; border-bottom: 2px solid var(--primary); padding-bottom: 10px; display: inline-block; }
-        label { display: block; margin-top: 15px; font-weight: 500; font-size: 0.9rem; }
-        input[type="text"], select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; }
-        input[type="file"] { margin-top: 5px; }
-        .row { display: flex; gap: 20px; flex-wrap: wrap; }
-        .col { flex: 1; min-width: 250px; }
-        
-        /* Цвета леек */
-        .category-block { padding: 15px; border-radius: 8px; margin-top: 10px; }
-        .cat-red { background: #fee2e2; border: 1px solid #fca5a5; }
-        .cat-blue { background: #dbeafe; border: 1px solid #93c5fd; }
-        .cat-green { background: #dcfce7; border: 1px solid #86efac; }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--glass);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 25px;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
 
-        button.generate-btn { background: var(--primary); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; width: 100%; transition: 0.2s; font-weight: bold; }
-        button.generate-btn:hover { background: #4338ca; }
-        
-        #outputArea { margin-top: 30px; display: none; }
-        textarea#finalCode { font-family: monospace; height: 200px; background: #1f2937; color: #a5f3fc; width: 100%; }
-        .note { font-size: 0.8rem; color: #666; margin-top: 2px; }
+        /* ЛОГОТИП И ШАПКА */
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-wrap {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--accent);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            text-align: center;
+        }
+        .logo-wrap:hover { transform: scale(1.1); }
+        .logo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+        h1 { margin: 0; font-size: 24px; color: var(--dark); line-height: 1.2; }
+        .sub { font-size: 14px; color: #666; }
+
+        /* СЕТКА (GRID) КАК В ПРИМЕРЕ С ОВЕЧКОЙ */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+
+        .card {
+            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            box-sizing: border-box;
+            transition: 0.2s;
+            background: #fff;
+        }
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Специальные стили для лейблов с загрузкой */
+        .file-upload-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            background: #e3f2fd;
+            color: #1565c0;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1px dashed #1565c0;
+            margin-top: 5px;
+        }
+        .file-upload-btn:hover { background: #bbdefb; }
+
+        /* ЦВЕТНЫЕ БЛОКИ ДЛЯ ЛЕЕК */
+        .cat-box { padding: 10px; border-radius: 8px; }
+        .cat-red { background: #ffebee; border: 1px solid #ffcdd2; }
+        .cat-blue { background: #e3f2fd; border: 1px solid #bbdefb; }
+        .cat-green { background: #e8f5e9; border: 1px solid #c8e6c9; }
+
+        /* КНОПКИ ДЕЙСТВИЯ */
+        .action-bar {
+            display: flex; gap: 10px; margin-top: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.1s;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
+        .btn-gen { background: linear-gradient(45deg, var(--primary), #8BC34A); }
+        .btn-dl { background: #2E3440; }
+
+        /* Зона вывода кода */
+        .output-box {
+            background: #2E3440;
+            color: #A3BE8C;
+            font-family: monospace;
+            padding: 15px;
+            border-radius: 10px;
+            width: 100%;
+            height: 100px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            resize: vertical;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     
-    <div class="header-branding">
-        <a href="https://t.me/DI_von_Irina" target="_blank" class="brand-link" title="Перейти в группу Deutsch interaktiv">
-            <img src="https://via.placeholder.com/150/4f46e5/ffffff?text=LOGO+DI" alt="Deutsch interaktiv Logo" class="logo-img" id="mainLogo">
+    <div class="header">
+        <a href="https://t.me/DI_von_Irina" target="_blank" title="Группа Deutsch interaktiv">
+            <div class="logo-wrap">
+                <img src="logo.jpg" alt="DI Logo" onerror="this.style.display='none'; this.parentNode.innerText='LOGO DI'">
+            </div>
         </a>
+        <div>
+            <h1>Конструктор: Цветочный Огород</h1>
+            <div class="sub">Создано специально для <b>Deutsch interaktiv</b> | Универсальный редактор</div>
+        </div>
     </div>
 
-    <h1>Редактор: "В цветочном огороде"</h1>
-    <p class="subtitle">Создано специально для Deutsch interaktiv</p>
-
-    <div class="section">
-        <h2>1. Общие настройки</h2>
-        <div class="row">
-            <div class="col">
+    <div class="card">
+        <div class="card-title">⚙️ Настройки Игры</div>
+        <div class="grid-3">
+            <div>
                 <label>Название игры</label>
                 <input type="text" id="gameTitle" value="Игра «В цветочном огороде»">
             </div>
-            <div class="col">
+            <div>
                 <label>Язык интерфейса</label>
                 <select id="gameLang">
                     <option value="ru">Русский</option>
@@ -76,213 +206,283 @@
                     <option value="en">English</option>
                 </select>
             </div>
-        </div>
-        <div class="row">
-            <div class="col"><label>Кнопка "Старт"</label><input type="text" id="textStart" value="Starten"></div>
-            <div class="col"><label>Кнопка "Победа"</label><input type="text" id="textFinish" value="Gut gemacht!"></div>
-            <div class="col"><label>Кнопка "Повторить"</label><input type="text" id="textRepeat" value="Nochmal"></div>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>2. Оформление</h2>
-        <label>Фон (Сад)</label>
-        <input type="file" id="bgInput" accept="image/*">
-        <div class="note">Поддерживает загрузку с компьютера (автоматически вшивается в код)</div>
-
-        <div class="row">
-            <div class="col"><label>Персонаж (Художник)</label><input type="file" id="heroInput" accept="image/*"></div>
-            <div class="col"><label>Антагонист (Пчела)</label><input type="file" id="enemyInput" accept="image/*"></div>
-        </div>
-        
-        <div class="row">
-             <div class="col"><label>Музыка (MP3)</label><input type="file" id="musicInput" accept="audio/*"></div>
-             <div class="col"><label>Звук неудачи</label><input type="file" id="failSoundInput" accept="audio/*"></div>
+            <div>
+                <label>Текст кнопки Старт</label>
+                <input type="text" id="btnStartText" value="Starten">
+            </div>
         </div>
     </div>
 
-    <div class="section">
-        <h2>3. Категории и Слова (Лейки)</h2>
-        <div class="category-block cat-red">
-            <label>🔴 Красная категория (напр. Die)</label>
-            <input type="text" id="cat1Name" value="Die">
-            <label>Слова (через запятую):</label>
-            <textarea id="cat1Words" rows="2">Katze, Maus, Kuh, Biene, Spinne, Ziege</textarea>
+    <div class="card">
+        <div class="card-title">🎨 Оформление (Загрузка с компьютера)</div>
+        <div class="grid-3">
+            <div>
+                <label>Фон (Сад)</label>
+                <label class="file-upload-btn">
+                    📂 Выбрать фон
+                    <input type="file" id="bgInput" accept="image/*" style="display:none" onchange="loadFile(this, 'bg')">
+                </label>
+                <span id="status-bg" style="font-size:10px; color:green;"></span>
+            </div>
+            <div>
+                <label>Герой (Художник)</label>
+                <label class="file-upload-btn">
+                    📂 Выбрать героя
+                    <input type="file" id="heroInput" accept="image/*" style="display:none" onchange="loadFile(this, 'hero')">
+                </label>
+                <span id="status-hero" style="font-size:10px; color:green;"></span>
+            </div>
+            <div>
+                <label>Враг (Пчела)</label>
+                <label class="file-upload-btn">
+                    📂 Выбрать пчелу
+                    <input type="file" id="enemyInput" accept="image/*" style="display:none" onchange="loadFile(this, 'enemy')">
+                </label>
+                <span id="status-enemy" style="font-size:10px; color:green;"></span>
+            </div>
         </div>
-        <div class="category-block cat-blue">
-            <label>🔵 Синяя категория (напр. Der)</label>
-            <input type="text" id="cat2Name" value="Der">
-            <label>Слова (через запятую):</label>
-            <textarea id="cat2Words" rows="2">Hund, Fisch, Hamster, Vogel, Löwe</textarea>
-        </div>
-        <div class="category-block cat-green">
-            <label>🟢 Зеленая категория (напр. Das)</label>
-            <input type="text" id="cat3Name" value="Das">
-            <label>Слова (через запятую):</label>
-            <textarea id="cat3Words" rows="2">Pferd, Nashorn, Reh, Schwein, Huhn</textarea>
+        <div style="margin-top:10px">
+             <label>Музыка (MP3)</label>
+             <input type="file" id="musicInput" accept="audio/*" onchange="loadFile(this, 'music')">
         </div>
     </div>
 
-    <div class="section">
-        <h2>4. Средний уровень (Предложения)</h2>
-        <p class="note">Формат: Предложение | Номер лейки (1=Красная, 2=Синяя, 3=Зеленая)</p>
-        <textarea id="mediumContent" rows="5" placeholder="___ Katze trinkt Milch. | 1">___ Katze trinkt Milch. | 1
+    <div class="card">
+        <div class="card-title">📚 Категории (Лейки)</div>
+        <div class="grid-3">
+            <div class="cat-box cat-red">
+                <label>🔴 Красная (Die/<10)</label>
+                <input type="text" id="cat1Name" value="Die">
+                <label style="margin-top:5px">Слова (через запятую):</label>
+                <textarea id="cat1Words" rows="4">Katze, Maus, Kuh, Biene, Spinne, Ziege</textarea>
+            </div>
+            <div class="cat-box cat-blue">
+                <label>🔵 Синяя (Der/>10)</label>
+                <input type="text" id="cat2Name" value="Der">
+                <label style="margin-top:5px">Слова (через запятую):</label>
+                <textarea id="cat2Words" rows="4">Hund, Fisch, Hamster, Vogel, Löwe</textarea>
+            </div>
+            <div class="cat-box cat-green">
+                <label>🟢 Зеленая (Das/=10)</label>
+                <input type="text" id="cat3Name" value="Das">
+                <label style="margin-top:5px">Слова (через запятую):</label>
+                <textarea id="cat3Words" rows="4">Pferd, Nashorn, Reh, Schwein, Huhn</textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">📝 Задания (Средний уровень)</div>
+        <label>Формат: Предложение | Номер лейки (1, 2 или 3)</label>
+        <textarea id="mediumContent" rows="4" placeholder="___ Katze trinkt Milch. | 1">___ Katze trinkt Milch. | 1
 ___ Hund spielt Ball. | 2
 ___ Pferd steht auf der Wiese. | 3</textarea>
     </div>
 
-    <button class="generate-btn" onclick="generateGame()">🚀 Сгенерировать код игры</button>
-
-    <div id="outputArea" class="section">
-        <h2>Готовый HTML код</h2>
-        <p>Скопируйте код ниже и вставьте в Genially (Insert > Others).</p>
-        <textarea id="finalCode" readonly></textarea>
-        <button onclick="copyCode()" style="margin-top:10px; padding:10px; cursor:pointer; background:#e5e7eb; border:none; border-radius:5px;">Копировать</button>
+    <div class="action-bar">
+        <button class="btn btn-gen" onclick="generate()">🚀 Сгенерировать Код</button>
+        <button class="btn btn-dl" onclick="downloadHTML()">💾 Скачать HTML (Для Genially)</button>
     </div>
+
+    <div class="card" style="margin-top:20px">
+        <div class="card-title">✅ Готовый код (Iframe srcdoc)</div>
+        <textarea id="output" class="output-box" readonly onclick="this.select()"></textarea>
+    </div>
+
 </div>
 
 <script>
-    const assets = { bg: '', hero: '', enemy: '', music: '', failSound: '' };
+    // Хранилище для файлов (Base64)
+    const assets = {
+        bg: 'https://images.unsplash.com/photo-1558293842-c0fd3db86157?q=80&w=1000&auto=format&fit=crop', // Дефолт
+        hero: 'https://cdn-icons-png.flaticon.com/512/3069/3069172.png', // Дефолт художник
+        enemy: 'https://cdn-icons-png.flaticon.com/512/3069/3069186.png', // Дефолт пчела
+        music: ''
+    };
 
-    function handleFile(e, key) {
-        const file = e.target.files[0];
+    function loadFile(input, key) {
+        const file = input.files[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (event) => { assets[key] = event.target.result; };
+            reader.onload = function(e) {
+                assets[key] = e.target.result;
+                document.getElementById('status-' + key).innerText = '✅ Загружено';
+            };
             reader.readAsDataURL(file);
         }
     }
 
-    document.getElementById('bgInput').addEventListener('change', (e) => handleFile(e, 'bg'));
-    document.getElementById('heroInput').addEventListener('change', (e) => handleFile(e, 'hero'));
-    document.getElementById('enemyInput').addEventListener('change', (e) => handleFile(e, 'enemy'));
-    document.getElementById('musicInput').addEventListener('change', (e) => handleFile(e, 'music'));
-    document.getElementById('failSoundInput').addEventListener('change', (e) => handleFile(e, 'failSound'));
-
-    function generateGame() {
-        const config = {
+    function generate() {
+        // Сбор данных
+        const data = {
             title: document.getElementById('gameTitle').value,
-            texts: {
-                start: document.getElementById('textStart').value,
-                finish: document.getElementById('textFinish').value,
-                repeat: document.getElementById('textRepeat').value
-            },
-            categories: [
+            btn: document.getElementById('btnStartText').value,
+            cats: [
                 { id: 1, name: document.getElementById('cat1Name').value, words: document.getElementById('cat1Words').value.split(',').map(s=>s.trim()) },
                 { id: 2, name: document.getElementById('cat2Name').value, words: document.getElementById('cat2Words').value.split(',').map(s=>s.trim()) },
                 { id: 3, name: document.getElementById('cat3Name').value, words: document.getElementById('cat3Words').value.split(',').map(s=>s.trim()) }
             ],
-            medium: document.getElementById('mediumContent').value.split('\n').filter(l=>l.includes('|')).map(l => {
-                const p = l.split('|'); return { t: p[0].trim(), c: parseInt(p[1].trim()) };
-            }),
-            assets: {
-                bg: assets.bg || 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=1000&q=80',
-                hero: assets.hero || 'https://cdn-icons-png.flaticon.com/512/2922/2922510.png',
-                enemy: assets.enemy || 'https://cdn-icons-png.flaticon.com/512/3069/3069186.png',
-                music: assets.music,
-                fail: assets.failSound
-            }
+            tasks: document.getElementById('mediumContent').value.split('\n').map(l => {
+                const p = l.split('|'); return p.length>1 ? {t: p[0].trim(), a: parseInt(p[1])} : null;
+            }).filter(x=>x),
+            assets: assets
         };
 
-        const gameHTML = `
+        // ГЕНЕРАТОР КОДА ИГРЫ (ENGINE)
+        const gameCode = `
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <style>
-  body { margin:0; overflow:hidden; font-family: sans-serif; background: url('${config.assets.bg}') center/cover no-repeat; height: 100vh; width: 100vw; }
-  #ui { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .cans { display: flex; gap: 20px; position: absolute; bottom: 20px; width: 100%; justify-content: center; }
-  .can { width: 100px; height: 100px; background: white; border-radius: 10px; display:flex; align-items:center; justify-content:center; font-weight:bold; border: 4px solid #333; cursor: pointer; transition: 0.2s; font-size: 1.2rem; box-shadow: 0 4px 0 rgba(0,0,0,0.2); }
-  .can:active { transform: translateY(4px); box-shadow: none; }
-  .red { border-color: #ef4444; color: #ef4444; }
-  .blue { border-color: #3b82f6; color: #3b82f6; }
-  .green { border-color: #22c55e; color: #22c55e; }
+  body { margin:0; overflow:hidden; font-family: 'Segoe UI', sans-serif; background: url('${data.assets.bg}') center/cover no-repeat; }
+  #app { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   
-  #task-box { background: rgba(255,255,255,0.95); padding: 20px 40px; border-radius: 15px; font-size: 2rem; font-weight: bold; margin-bottom: 150px; box-shadow: 0 10px 20px rgba(0,0,0,0.3); border: 2px solid #4f46e5; text-align: center; min-width: 300px; }
+  /* CANS */
+  .cans-area { display: flex; gap: 15px; position: absolute; bottom: 20px; width: 100%; justify-content: center; z-index: 10; }
+  .can { 
+      width: 100px; height: 110px; 
+      background: white; border-radius: 15px; 
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom:10px;
+      font-weight: bold; font-size: 1.2rem; cursor: pointer; 
+      border: 4px solid #555; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: transform 0.2s; position: relative;
+  }
+  .can:active { transform: scale(0.95); }
+  .can-img { width: 60px; height: 60px; background-size: contain; background-repeat: no-repeat; margin-bottom: 5px; }
   
-  #progress { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
-  .drop { width: 20px; height: 20px; background: rgba(255,255,255,0.5); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 1px solid #3b82f6; }
-  .drop.filled { background: #3b82f6; box-shadow: 0 0 10px #3b82f6; }
+  .red { border-color: #ff5252; color: #ff5252; }
+  .red .can-img { background-image: url('https://cdn-icons-png.flaticon.com/512/3813/3813654.png'); filter: hue-rotate(-50deg); }
+  
+  .blue { border-color: #448aff; color: #448aff; }
+  .blue .can-img { background-image: url('https://cdn-icons-png.flaticon.com/512/3813/3813654.png'); filter: hue-rotate(180deg); }
+  
+  .green { border-color: #69f0ae; color: #43a047; }
+  .green .can-img { background-image: url('https://cdn-icons-png.flaticon.com/512/3813/3813654.png'); filter: hue-rotate(50deg); }
 
-  #hero { position: absolute; left: 5%; bottom: 140px; height: 200px; transition: 0.3s; }
-  #bee { position: absolute; right: -200px; top: 20px; width: 80px; transition: top 1s, right 1s, transform 0.5s; }
-  .bee-attack { right: 50% !important; top: 50% !important; transform: scale(2) !important; }
+  /* GAME ELEMENTS */
+  #task-card { 
+      background: rgba(255,255,255,0.95); padding: 20px 40px; border-radius: 20px; 
+      font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 100px; 
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2); border: 3px solid #fff; min-width: 300px;
+      animation: float 3s infinite ease-in-out;
+  }
+  @keyframes float { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
 
-  .screen { position: absolute; inset: 0; background: rgba(255,255,255,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-  button.btn { padding: 15px 40px; font-size: 1.5rem; background: #4f46e5; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); transition: 0.3s; }
-  button.btn:hover { transform: scale(1.05); }
+  #hero { position: absolute; left: 5%; bottom: 150px; height: 220px; transition: 0.3s; z-index: 5; }
+  #bee { 
+      position: absolute; right: -200px; top: 20px; width: 100px; 
+      transition: all 1s ease-in-out; z-index: 20; 
+  }
+  .bee-attack { right: 50% !important; top: 50% !important; transform: translate(50%, -50%) scale(2.5) !important; }
+
+  /* PROGRESS */
+  .drops { position: absolute; top: 20px; display: flex; gap: 5px; }
+  .drop { width: 25px; height: 25px; background: rgba(255,255,255,0.5); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); border: 2px solid #2196f3; transition: 0.3s; }
+  .filled { background: #2196f3; box-shadow: 0 0 15px #2196f3; }
+
+  /* SCREENS */
+  .screen { position: absolute; inset: 0; background: rgba(255,255,255,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; text-align:center;}
+  .btn-start { padding: 15px 50px; font-size: 24px; background: #4CAF50; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 0 #388E3C; transition: 0.2s; }
+  .btn-start:active { transform: translateY(4px); box-shadow: none; }
+
 </style>
 </head>
 <body>
+
 <div id="start" class="screen">
-    <h1 style="color:#4f46e5; font-size: 3rem; margin-bottom: 10px;">${config.title}</h1>
-    <button class="btn" onclick="startGame()">${config.texts.start}</button>
-</div>
-<div id="win" class="screen" style="display:none;">
-    <h1 style="color:#22c55e;">${config.texts.finish}</h1>
-    <button class="btn" onclick="location.reload()">${config.texts.repeat}</button>
+    <h1 style="color:#2E7D32; font-size:40px;">${data.title}</h1>
+    <button class="btn-start" onclick="startGame()">${data.btn}</button>
 </div>
 
-<div id="ui" style="display:none;">
-    <div id="progress"></div>
-    <div id="task-box">...</div>
-    <img id="hero" src="${config.assets.hero}">
-    <img id="bee" src="${config.assets.enemy}">
+<div id="app" style="display:none">
+    <div class="drops" id="bar"></div>
     
-    <div class="cans">
-        <div class="can red" onclick="check(1)">${config.categories[0].name}</div>
-        <div class="can blue" onclick="check(2)">${config.categories[1].name}</div>
-        <div class="can green" onclick="check(3)">${config.categories[2].name}</div>
+    <div id="task-card">Ready?</div>
+
+    <img id="hero" src="${data.assets.hero}">
+    <img id="bee" src="${data.assets.enemy}">
+
+    <div class="cans-area">
+        <div class="can red" onclick="check(1)"><div class="can-img"></div>${data.cats[0].name}</div>
+        <div class="can blue" onclick="check(2)"><div class="can-img"></div>${data.cats[1].name}</div>
+        <div class="can green" onclick="check(3)"><div class="can-img"></div>${data.cats[2].name}</div>
     </div>
 </div>
 
 <script>
-    const cfg = ${JSON.stringify(config)};
+    const cfg = ${JSON.stringify(data)};
     let score = 0, max = 10;
-    let current = null;
-    let mode = 'easy'; // Можно расширить логику уровней
+    let curr = null;
+    let audio = cfg.assets.music ? new Audio(cfg.assets.music) : null;
 
     function startGame() {
-        document.getElementById('start').style.display = 'none';
-        document.getElementById('ui').style.display = 'flex';
-        renderDrops();
-        nextTask();
-        if(cfg.assets.music) { let a = new Audio(cfg.assets.music); a.volume=0.3; a.loop=true; a.play().catch(()=>{}); }
-    }
-    
-    function renderDrops() {
-        let h = ''; for(let i=0; i<max; i++) h+='<div class="drop" id="d'+i+'"></div>';
-        document.getElementById('progress').innerHTML = h;
+        document.getElementById('start').style.display='none';
+        document.getElementById('app').style.display='flex';
+        renderBar();
+        next();
+        if(audio) { audio.loop = true; audio.volume = 0.3; audio.play().catch(e=>console.log(e)); }
     }
 
-    function nextTask() {
-        // Простая логика: берем случайное слово
-        let catIdx = Math.floor(Math.random()*3);
-        let word = cfg.categories[catIdx].words[Math.floor(Math.random()*cfg.categories[catIdx].words.length)];
-        current = { t: word, c: cfg.categories[catIdx].id };
-        document.getElementById('task-box').innerText = current.t;
+    function renderBar() {
+        let h=''; for(let i=0; i<max; i++) h+='<div class="drop" id="d'+i+'"></div>';
+        document.getElementById('bar').innerHTML = h;
+    }
+
+    function next() {
+        // Рандомно выбираем категорию (0, 1 или 2)
+        let cIdx = Math.floor(Math.random() * 3);
+        let cat = cfg.cats[cIdx];
+        // Выбираем слово
+        let word = cat.words[Math.floor(Math.random() * cat.words.length)];
+        
+        curr = { t: word, id: cat.id };
+        document.getElementById('task-card').innerText = curr.t;
+        
+        // Сброс пчелы
         document.getElementById('bee').classList.remove('bee-attack');
     }
 
     function check(id) {
-        if(id === current.c) {
+        if(id === curr.id) {
+            // WIN
             document.getElementById('d'+score).classList.add('filled');
             score++;
-            if(score >= max) { setTimeout(()=>{document.getElementById('win').style.display='flex'}, 500); }
-            else { nextTask(); }
+            if(score >= max) {
+                alert("Победа! / Gewonnen!"); // Тут можно сделать красивый экран
+                location.reload();
+            } else {
+                next();
+            }
         } else {
+            // FAIL
             document.getElementById('bee').classList.add('bee-attack');
-            if(cfg.assets.fail) new Audio(cfg.assets.fail).play();
+            // Если бы был звук жужжания, его можно добавить сюда
         }
     }
 <\/script>
 </body>
 </html>`;
-        document.getElementById('outputArea').style.display = 'block';
-        document.getElementById('finalCode').value = gameHTML;
+
+        // 1. Вставляем в поле для копирования
+        const iframeCode = `<iframe srcdoc="${gameCode.replace(/"/g, '&quot;')}" width="100%" height="600" style="border:none;"></iframe>`;
+        document.getElementById('output').value = iframeCode;
+
+        // 2. Сохраняем в переменную для скачивания файла
+        window.generatedHTML = gameCode;
     }
-    function copyCode() { document.getElementById('finalCode').select(); document.execCommand('copy'); }
+
+    function downloadHTML() {
+        if(!window.generatedHTML) { alert("Сначала нажмите Сгенерировать!"); return; }
+        const blob = new Blob([window.generatedHTML], {type: 'text/html'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'garden-game.html';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
 </script>
+
 </body>
 </html>
