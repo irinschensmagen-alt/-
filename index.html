@@ -3,6 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deutsch interaktiv | Ultimate Editor 20.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+JP&family=Noto+Sans+SC&display=swap" rel="stylesheet">
+    <style>
+        :root { --p: #6C5CE7; --a: #FD79A8; --dark: #2D3436; }
+        body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .wrapper { max-width: 1600px; margin: 0 auto; background: white; border-radius: 40px; border: 5px solid var(--p); padding: 35px; box-shadow: 0 40px 80px rgba(0,0,0,0.1); }
+        
+        /* HEADER */
+        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #eee; padding-bottom: 25px; margin-bottom: 30px; }
+        .logo-img { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--a); object-fit: cover; }
+
+        /* GRID */
+        .grid { display: grid; grid-template-columns: 1.2fr 1fr 400px; gap: 25px; }
+        .panel { background: #F8F9FF; border-radius: 30px; padding: 25px; border: 1px solid #E1E2EF; }
+        .panel-h { font-weight: 900; color: var(--p); text-transform: uppercase; margin-bottom: 20px; border-left: 6px solid var(--a); padding-left: 15px; }
+
+        /* КАТЕГОРИИ */
+        .cat-card { background: white; padding: 20px; border-radius: 20px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .double-select { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; }
+        
+        label { display: block; font-size: 0.7rem; font-weight: 800; color: #636e72; text-transform: uppercase; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #DFE6E9; border-radius: 12px; font-family: inherit; }
+
+        /* GIF ПРЕВЬЮ */
+        .gif-selector { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; }
+        .gif-option { width: 60px; height: 60px; border: 3px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.2s; object-fit: cover; }
+        .gif-option.active { border-color: var(--a); transform: scale(1.1); }
+
+        .btn-main { width: 100%; padding: 25px; border: none; border-radius: 20px; font-weight: 900; font-size: 1.6rem; cursor: pointer; background: var(--p); color: white; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="header">
+        <div style="display:flex; align-items:center; gap:25px;">
+            <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" class="logo-img">
+            <div>
+                <h1 style="margin:0; color:var(--p); font-size:2.5rem;">Deutsch interaktiv</h1>
+                <span id="ui-sub" style="font-weight:700; color:#b2bec3; letter-spacing:3px;">PREMIUM EDITOR 20.0</span>
+            </div>
+        </div>
+        <select id="uiLang" onchange="translateAll()" style="width:200px;">
+            <option value="ru">Русский (RU)</option>
+            <option value="de">Deutsch (DE)</option>
+            <option value="zh">中文 (ZH)</option>
+            <option value="ja">日本語 (JA)</option>
+        </select>
+    </div>
+
+    <div class="grid">
+        <div class="panel">
+            <div class="panel-h" id="h1">Настройка Категорий</div>
+            <div id="cat-root"></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-h" id="h2">Герои и Подарки (GIF)</div>
+            
+            <label id="l-hero">Выберите Персонажа</label>
+            <div class="gif-selector">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/mickey.gif" class="gif-option active" onclick="selGif('h', this)">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/snowwhite.gif" class="gif-option" onclick="selGif('h', this)">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/stitch.gif" class="gif-option" onclick="selGif('h', this)">
+            </div>
+            <input type="text" id="heroUrl" placeholder="Или своя ссылка на GIF...">
+
+            <label id="l-gift" style="margin-top:20px;">Выберите Подарок</label>
+            <div class="gif-selector">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/cup.gif" class="gif-option active" onclick="selGif('g', this)">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/fireworks.gif" class="gif-option" onclick="selGif('g', this)">
+                <img src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHJueW90Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3R6Z3/diamond.gif" class="gif-option" onclick="selGif('g', this)">
+            </div>
+            <input type="text" id="giftUrl" placeholder="Ссылка на подарок...">
+        </div>
+
+        <div class="panel">
+            <div class="panel-h" id="h3">Настройка Кнопок</div>
+            
+            <label id="lb1">Кнопка "Начать"</label>
+            <input type="text" id="btn1" value="НАЧАТЬ">
+
+            <label id="lb2">Кнопка "Завершить"</label>
+            <input type="text" id="btn2" value="ЗАВЕРШИТЬ">
+
+            <label id="lb3">Кнопка "Повторить задание"</label>
+            <input type="text" id="btn3" value="ПОВТОРИТЬ ЗАДАНИЕ">
+
+            <label id="lb4">Кнопка "Начать заново игру"</label>
+            <input type="text" id="btn4" value="НАЧАТЬ ЗАНОВО ИГРУ">
+        </div>
+    </div>
+
+    <button class="btn-main" onclick="alert('Магия готова!')" id="btn-gen">🚀 СОЗДАТЬ МАГИЮ GENIALLY</button>
+</div>
+
+<script>
+    const dict = {
+        ru: { h1: "Настройка Категорий", h2: "Герои и Подарки", h3: "Тексты Кнопок", lb1: "Начать", lb2: "Завершить", lb3: "Повторить задание", lb4: "Начать заново", gen: "🚀 СОЗДАТЬ МАГИЮ", cat: "Категория", cWin: "Цвет", eWin: "Эффект" },
+        de: { h1: "Kategorien", h2: "Helden & Geschenke", h3: "Button-Texte", lb1: "Starten", lb2: "Beenden", lb3: "Aufgabe wiederholen", lb4: "Neu starten", gen: "🚀 SPIEL ERSTELLEN", cat: "Kategorie", cWin: "Farbe", eWin: "Effekt" },
+        zh: { h1: "分类设置", h2: "人物与礼物", h3: "按钮文本", lb1: "开始", lb2: "结束", lb3: "重复任务", lb4: "重新开始", gen: "🚀 生成游戏", cat: "分类", cWin: "颜色", eWin: "效果" },
+        ja: { h1: "カテゴリ設定", h2: "キャラとギフト", h3: "ボタンテキスト", lb1: "スタート", lb2: "終了", lb3: "タスクを繰り返す", lb4: "最初から始める", gen: "🚀 ゲームを作成", cat: "カテゴリ", cWin: "色", eWin: "エフェクト" }
+    };
+
+    function translateAll() {
+        const l = document.getElementById('uiLang').value;
+        const d = dict[l] || dict.ru;
+        document.getElementById('h1').innerText = d.h1;
+        document.getElementById('h2').innerText = d.h2;
+        document.getElementById('h3').innerText = d.h3;
+        document.getElementById('lb1').innerText = d.lb1;
+        document.getElementById('btn1').value = d.lb1.toUpperCase();
+        document.getElementById('btn2').value = d.lb2.toUpperCase();
+        document.getElementById('btn3').value = d.lb3.toUpperCase();
+        document.getElementById('btn4').value = d.lb4.toUpperCase();
+        document.getElementById('btn-gen').innerText = d.gen;
+        
+        for(let i=1; i<=4; i++) {
+            document.getElementById(`cl-${i}`).innerText = `${d.cat} ${i}`;
+            document.getElementById(`col-l-${i}`).innerText = d.cWin;
+            document.getElementById(`eff-l-${i}`).innerText = d.eWin;
+        }
+    }
+
+    const catRoot = document.getElementById('cat-root');
+    for(let i=1; i<=4; i++) {
+        catRoot.innerHTML += `
+            <div class="cat-card">
+                <label id="cl-${i}">Категория ${i}</label>
+                <input type="text" value="${['Der','Die','Das','Plural'][i-1] || ''}">
+                <div class="double-select">
+                    <div>
+                        <label id="col-l-${i}">Цвет</label>
+                        <input type="color" value="#6C5CE7<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Deutsch interaktiv | Total Localization 19.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+JP&family=Noto+Sans+SC&display=swap" rel="stylesheet">
     <style>
