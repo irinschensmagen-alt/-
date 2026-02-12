@@ -2,28 +2,25 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Masterpiece Editor</title>
+    <title>Deutsch interaktiv | Final Stable</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6C5CE7; --a: #FD79A8; --ok: #00B894; }
         body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; padding: 20px; color: #2d3436; margin: 0; }
         .wrapper { max-width: 1450px; margin: 0 auto; background: white; border-radius: 40px; border: 5px solid var(--p); padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
         
-        /* ШАПКА */
         .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #eee; padding-bottom: 20px; margin-bottom: 25px; }
         .logo-area { display: flex; align-items: center; gap: 20px; }
         .logo-img { width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--a); }
         .header-titles h2 { margin: 0; color: var(--p); font-size: 2.2rem; line-height: 1; }
         .header-titles span { color: var(--a); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* СЕТКА ПАНЕЛЕЙ */
         .grid { display: grid; grid-template-columns: 1.1fr 1fr 380px; gap: 20px; }
         .panel { background: #F8F9FF; border-radius: 25px; padding: 22px; border: 1px solid #E1E2EF; display: flex; flex-direction: column; }
         .panel-h { font-weight: 900; color: var(--p); border-left: 6px solid var(--a); padding-left: 12px; margin-bottom: 20px; text-transform: uppercase; }
 
-        /* ИКОНКИ И СЛАЙДЕРЫ */
         .hue-slider { -webkit-appearance: none; width: 100%; height: 12px; border-radius: 10px; background: linear-gradient(to right, red, yellow, green, cyan, blue, magenta, red); margin: 12px 0; cursor: pointer; }
-        .hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: white; border: 3px solid var(--p); border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: white; border: 3px solid var(--p); border-radius: 50%; }
 
         .img-grid { display: flex; gap: 12px; flex-wrap: wrap; padding: 10px 0; }
         .img-card { width: 85px; height: 85px; border-radius: 18px; border: 3px solid #ddd; cursor: pointer; transition: 0.2s; background: white; object-fit: contain; padding: 6px; }
@@ -33,16 +30,12 @@
         .eff-btn { flex: 1; padding: 10px; background: #eee; border-radius: 10px; cursor: pointer; text-align: center; border: 2px solid transparent; font-size: 1.2rem; }
         .eff-btn.active { background: white; border-color: var(--a); color: var(--p); font-weight: bold; }
 
-        /* ФОРМЫ */
         input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #ddd; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; font-size: 0.95rem; outline: none; }
-        input:focus, select:focus { border-color: var(--p); }
         label { font-size: 0.75rem; font-weight: 900; color: #636e72; margin-bottom: 5px; display: block; text-transform: uppercase; }
         
-        /* КНОПКИ */
         .btn { width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; color: white; margin-top: 10px; text-transform: uppercase; }
         .btn-save { background: var(--ok); box-shadow: 0 5px 0 #008a6e; }
         .btn-main { background: var(--p); box-shadow: 0 5px 0 #4834D4; font-size: 1.2rem; }
-        .btn:active { transform: translateY(3px); box-shadow: none; }
     </style>
 </head>
 <body>
@@ -53,11 +46,11 @@
             <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" class="logo-img">
             <div class="header-titles">
                 <h2>Deutsch interaktiv</h2>
-                <span id="txt-sub">MASTERPIECE 3.0</span>
+                <span id="txt-sub">KREATIV-EDITOR</span>
             </div>
         </div>
         <div style="width: 280px;">
-            <label id="lbl-ui-lang">ЯЗЫК РЕДАКТОРА / SPRACHE</label>
+            <label id="lbl-ui-lang">Язык / Sprache</label>
             <select id="uiLang" onchange="applyTranslation()">
                 <option value="ru">Русский (RU)</option>
                 <option value="de">Deutsch (DE)</option>
@@ -74,29 +67,26 @@
     <div class="grid">
         <div class="panel">
             <div class="panel-h" id="h1">КАТЕГОРИИ</div>
-            <div id="cats-box">
-                </div>
+            <div id="cats-box"></div>
         </div>
 
         <div class="panel">
             <div class="panel-h" id="h2">МИР И ГЕРОИ</div>
-            
-            <label id="lbl-theme">ТЕМАТИКА ИГРЫ (ФОН)</label>
+            <label id="lbl-theme">Тема фона</label>
             <select id="theme-sel">
                 <option>Студия художника 🎨</option>
-                <option>Картинная галерея 🖼️</option>
+                <option>Галерея 🖼️</option>
                 <option>В огороде 🌻</option>
             </select>
 
-            <label style="margin-top:20px;" id="lbl-hero">КЕМ ТЫ БУДЕШЬ? (ВЫБЕРИ ГЕРОЯ)</label>
+            <label style="margin-top:20px;" id="lbl-hero">Выберите персонажа</label>
             <div class="img-grid">
                 <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png" class="img-card active" onclick="sel(this)">
                 <img src="https://cdn-icons-png.flaticon.com/512/3063/3063823.png" class="img-card" onclick="sel(this)">
                 <img src="https://cdn-icons-png.flaticon.com/512/3063/3063822.png" class="img-card" onclick="sel(this)">
-                <img src="https://cdn-icons-png.flaticon.com/512/201/201421.png" class="img-card" onclick="sel(this)">
             </div>
 
-            <label style="margin-top:20px;" id="lbl-gift">ПОДАРОК ЗА УСПЕХ</label>
+            <label style="margin-top:20px;" id="lbl-gift">Подарок за успех</label>
             <div class="img-grid">
                 <img src="https://cdn-icons-png.flaticon.com/512/2970/2970785.png" class="img-card active" onclick="sel(this)">
                 <img src="https://cdn-icons-png.flaticon.com/512/2970/2970792.png" class="img-card" onclick="sel(this)">
@@ -106,116 +96,58 @@
 
         <div class="panel">
             <div class="panel-h" id="h3">ИНТЕРФЕЙС</div>
+            <label id="lb1">Кнопка "Начать"</label><input type="text" id="i1" value="НАЧАТЬ">
+            <label id="lb2">Кнопка "Завершить"</label><input type="text" id="i2" value="ЗАВЕРШИТЬ">
+            <label id="lb3">Кнопка "Повторить"</label><input type="text" id="i3" value="ПОВТОРИТЬ">
+            <label id="lb4">Кнопка "Заново"</label><input type="text" id="i4" value="ЗАНОВО">
+            <label id="lw">Победный текст</label><input type="text" id="i5" value="ТЫ ГЕНИЙ!">
             
-            <label id="lbl-diff">УРОВЕНЬ СЛОЖНОСТИ</label>
-            <select id="diff-sel">
-                <option>🦋 Бабочка (Легкий)</option>
-                <option>🐢 Черепаха (Средний)</option>
-                <option>🦁 Лев (Сложный)</option>
-            </select>
-
-            <label id="lb1">КНОПКА "НАЧАТЬ"</label>
-            <input type="text" id="i1" value="НАЧАТЬ">
-            
-            <label id="lb2">КНОПКА "ЗАВЕРШИТЬ"</label>
-            <input type="text" id="i2" value="ЗАВЕРШИТЬ">
-            
-            <label id="lb3">КНОПКА "ПОВТОРИТЬ ЗАДАНИЕ"</label>
-            <input type="text" id="i3" value="ПОВТОРИТЬ ЗАДАНИЕ">
-            
-            <label id="lb4">КНОПКА "НАЧАТЬ ИГРУ ЗАНОВО"</label>
-            <input type="text" id="i4" value="НАЧАТЬ ЗАНОВО">
-            
-            <label id="lw">ФИНАЛЬНЫЙ ТЕКСТ (ПОБЕДА)</label>
-            <input type="text" id="i5" value="ТЫ ГЕНИЙ!">
-            
-            <button class="btn btn-save" id="btn-s" onclick="save()">💾 СОХРАНИТЬ ПРЕСЕТ</button>
-            <button class="btn btn-main" id="btn-g" onclick="generate()">🚀 СОЗДАТЬ ИГРУ</button>
+            <button class="btn btn-save" id="btn-s">💾 СОХРАНИТЬ ПРЕСЕТ</button>
+            <button class="btn btn-main" id="btn-g">🚀 СОЗДАТЬ ИГРУ</button>
         </div>
     </div>
 </div>
 
 <script>
-    const dictionary = {
-        ru: {
-            h1:"КАТЕГОРИИ", h2:"МИР И ГЕРОИ", h3:"ИНТЕРФЕЙС", sub:"КРЕАТИВНЫЙ РЕДАКТОР",
-            cat:"КАТЕГОРИЯ", theme:"ТЕМАТИКА ИГРЫ (ФОН)", hero:"ВЫБЕРИ ГЕРОЯ", gift:"ПОДАРОК ЗА УСПЕХ",
-            diff:"УРОВЕНЬ СЛОЖНОСТИ", b1:'КНОПКА "НАЧАТЬ"', b2:'КНОПКА "ЗАВЕРШИТЬ"', b3:'КНОПКА "ПОВТОРИТЬ"', b4:'КНОПКА "ЗАНОВО"', 
-            win:"ФИНАЛЬНЫЙ ТЕКСТ", save:"💾 СОХРАНИТЬ ПРЕСЕТ", create:"🚀 СОЗДАТЬ ИГРУ",
-            startVal: "НАЧАТЬ", endVal: "ЗАВЕРШИТЬ", repVal: "ПОВТОРИТЬ ЗАДАНИЕ", resetVal: "НАЧАТЬ ЗАНОВО", winVal: "ТЫ ГЕНИЙ!"
-        },
-        de: {
-            h1:"KATEGORIEN", h2:"WELT & HELDEN", h3:"INTERFACE", sub:"KREATIV-EDITOR",
-            cat:"KATEGORIE", theme:"SPIELTHEMA (HINTERGRUND)", hero:"WÄHLE DEINEN HELDEN", gift:"BELOHNUNG",
-            diff:"SCHWIERIGKEITSGRAD", b1:'BUTTON "STARTEN"', b2:'BUTTON "BEENDEN"', b3:'BUTTON "WIEDERHOLEN"', b4:'BUTTON "NEUSTART"', 
-            win:"SIEGES-TEXT", save:"💾 PRESET SPEICHERN", create:"🚀 SPIEL ERSTELLEN",
-            startVal: "STARTEN", endVal: "BEENDEN", repVal: "AUFGABE WIEDERHOLEN", resetVal: "NEU STARTEN", winVal: "DU BIST EIN GENIE!"
-        },
-        en: {
-            h1:"CATEGORIES", h2:"WORLD & HEROES", h3:"INTERFACE", sub:"CREATIVE EDITOR",
-            cat:"CATEGORY", theme:"GAME THEME (BACKGROUND)", hero:"CHOOSE HERO", gift:"SUCCESS REWARD",
-            diff:"DIFFICULTY LEVEL", b1:'"START" BUTTON', b2:'"FINISH" BUTTON', b3:'"REPEAT" BUTTON', b4:'"RESTART" BUTTON', 
-            win:"VICTORY TEXT", save:"💾 SAVE PRESET", create:"🚀 CREATE GAME",
-            startVal: "START", endVal: "FINISH", repVal: "REPEAT TASK", resetVal: "START OVER", winVal: "YOU ARE A GENIUS!"
-        },
-        es: {
-            h1:"CATEGORÍAS", h2:"MUNDO Y HÉROES", h3:"INTERFAZ", sub:"EDITOR CREATIVO",
-            cat:"CATEGORÍA", theme:"TEMA DEL JUEGO", hero:"ELIGE HÉROE", gift:"PREMIO",
-            diff:"DIFICULTAD", b1:'BOTÓN "INICIAR"', b2:'BOTÓN "FINALIZAR"', b3:'BOTÓN "REPETIR"', b4:'BOTÓN "REINICIAR"', 
-            win:"TEXTO DE VICTORIA", save:"💾 GUARDAR PRESET", create:"🚀 CREAR JUEGO",
-            startVal: "INICIAR", endVal: "FINALIZAR", repVal: "REPETIR TAREA", resetVal: "REINICIAR", winVal: "¡ERES UN GENIO!"
-        },
-        fr: {
-            h1:"CATÉGORIES", h2:"MONDE ET HÉROS", h3:"INTERFACE", sub:"ÉDITEUR CRÉATIF",
-            cat:"CATÉGORIE", theme:"THÈME DU JEU", hero:"CHOISIR UN HÉROS", gift:"RÉCOMPENSE",
-            diff:"DIFFICULTÉ", b1:'BOUTON "COMMENCER"', b2:'BOUTON "TERMINER"', b3:'BOUTON "RÉPÉTER"', b4:'BOUTON "REFAIRE"', 
-            win:"TEXTE DE VICTOIRE", save:"💾 ENREGISTRER", create:"🚀 CRÉER LE JEU",
-            startVal: "COMMENCER", endVal: "TERMINER", repVal: "RÉPÉTER", resetVal: "REFAIRE", winVal: "TU ES UN GÉNIE !"
-        },
-        it: {
-            h1:"CATEGORIE", h2:"MONDO E EROI", h3:"INTERFACCIA", sub:"EDITOR CREATIVO",
-            cat:"CATEGORIA", theme:"TEMA DEL GIOCO", hero:"SCEGLI EROE", gift:"PREMIO",
-            diff:"DIFFICOLTÀ", b1:'PULSANTE "INIZIA"', b2:'PULSANTE "FINISCI"', b3:'PULSANTE "RIPETI"', b4:'PULSANTE "RICOMINCIA"', 
-            win:"TESTO DI VITTORIA", save:"💾 SALVA PRESET", create:"🚀 CREA GIOCO",
-            startVal: "INIZIA", endVal: "FINISCI", repVal: "RIPETI", resetVal: "RICOMINCIA", winVal: "SEI UN GENIO!"
-        },
-        zh: {
-            h1:"类别", h2:"世界与英雄", h3:"界面设置", sub:"创意编辑器",
-            cat:"类别", theme:"游戏主题", hero:"选择英雄", gift:"成功奖励",
-            diff:"难度等级", b1:'“开始”按钮', b2:'“结束”按钮', b3:'“重试”按钮', b4:'“重新开始”按钮', 
-            win:"胜利文字", save:"💾 保存预设", create:"🚀 创建游戏",
-            startVal: "开始", endVal: "完成", repVal: "重复任务", resetVal: "重新开始", winVal: "你是天才！"
-        },
-        ja: {
-            h1:"カテゴリー", h2:"世界とヒーロー", h3:"インターフェース", sub:"クリエイティブエディタ",
-            cat:"カテゴリー", theme:"ゲームのテーマ", hero:"ヒーローを選択", gift:"報酬",
-            diff:"難易度", b1:'「スタート」ボタン', b2:'「終了」ボタン', b3:'「もう一度」ボタン', b4:'「最初から」ボタン', 
-            win:"勝利のテキスト", save:"💾 保存する", create:"🚀 ゲームを作成",
-            startVal: "スタート", endVal: "終了", repVal: "繰り返す", resetVal: "最初から", winVal: "あなたは天才です！"
-        }
+    const dict = {
+        ru: { h1:"КАТЕГОРИИ", h2:"МИР И ГЕРОИ", h3:"ИНТЕРФЕЙС", cat:"КАТЕГОРИЯ", save:"💾 СОХРАНИТЬ ПРЕСЕТ", create:"🚀 СОЗДАТЬ ИГРУ" },
+        de: { h1:"KATEGORIEN", h2:"WELT & HELDEN", h3:"INTERFACE", cat:"KATEGORIE", save:"💾 PRESET SPEICHERN", create:"🚀 SPIEL ERSTELLEN" },
+        en: { h1:"CATEGORIES", h2:"WORLD & HEROES", h3:"INTERFACE", cat:"CATEGORY", save:"💾 SAVE PRESET", create:"🚀 CREATE GAME" }
     };
 
     function applyTranslation() {
-        const lang = document.getElementById('uiLang').value;
-        const d = dictionary[lang] || dictionary.ru;
-        
+        const l = document.getElementById('uiLang').value;
+        const d = dict[l] || dict.ru;
         document.getElementById('h1').innerText = d.h1;
         document.getElementById('h2').innerText = d.h2;
         document.getElementById('h3').innerText = d.h3;
-        document.getElementById('txt-sub').innerText = d.sub;
-        
-        document.getElementById('lbl-theme').innerText = d.theme;
-        document.getElementById('lbl-hero').innerText = d.hero;
-        document.getElementById('lbl-gift').innerText = d.gift;
-        document.getElementById('lbl-diff').innerText = d.diff;
-        
-        document.getElementById('lb1').innerText = d.b1;
-        document.getElementById('lb2').innerText = d.b2;
-        document.getElementById('lb3').innerText = d.b3;
-        document.getElementById('lb4').innerText = d.b4;
-        document.getElementById('lw').innerText = d.win;
-        
         document.getElementById('btn-s').innerText = d.save;
         document.getElementById('btn-g').innerText = d.create;
+        for(let i=1; i<=4; i++) { if(document.getElementById(`cl-${i}`)) document.getElementById(`cl-${i}`).innerText = `${d.cat} ${i}`; }
+    }
 
-        // Обновляем значения в полях ввода (опционально, если хотите автоматический перевод текста кнопок)
+    function init() {
+        const box = document.getElementById('cats-box');
+        const defs = ['Der', 'Die', 'Das', 'Plural'];
+        for(let i=1; i<=4; i++) {
+            box.innerHTML += `<div style="background:white; padding:15px; border-radius:18px; margin-bottom:12px; border:1px solid #eee;">
+                <label id="cl-${i}">КАТЕГОРИЯ ${i}</label>
+                <input type="text" value="${defs[i-1]}">
+                <input type="range" class="hue-slider">
+                <div class="eff-bar">
+                    <div class="eff-btn active" onclick="eff(this)">🚫</div>
+                    <div class="eff-btn" onclick="eff(this)">🔥</div>
+                    <div class="eff-btn" onclick="eff(this)">✨</div>
+                </div>
+                <textarea rows="1" placeholder="Слова..."></textarea>
+            </div>`;
+        }
+        applyTranslation();
+    }
+
+    window.sel = (el) => { el.parentElement.querySelectorAll('img').forEach(i=>i.classList.remove('active')); el.classList.add('active'); };
+    window.eff = (el) => { el.parentElement.querySelectorAll('.eff-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); };
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
