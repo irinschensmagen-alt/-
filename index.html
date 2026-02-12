@@ -2,39 +2,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Pro Editor</title>
+    <title>Deutsch interaktiv | Masterpiece Editor</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --p: #6C5CE7; --a: #FD79A8; --ok: #00B894; }
         body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; padding: 20px; color: #2d3436; margin: 0; }
-        .wrapper { max-width: 1450px; margin: 0 auto; background: white; border-radius: 40px; border: 5px solid var(--p); padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+        .wrapper { max-width: 1400px; margin: 0 auto; background: white; border-radius: 40px; border: 5px solid var(--p); padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
         
-        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #eee; padding-bottom: 20px; margin-bottom: 25px; }
-        .logo-area { display: flex; align-items: center; gap: 20px; }
-        .logo-img { width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--a); }
-        .header-titles h2 { margin: 0; color: var(--p); font-size: 2.2rem; line-height: 1; }
-        .header-titles span { color: var(--a); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; }
+        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #eee; padding-bottom: 20px; margin-bottom: 25px; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--a); }
+        .header-titles h2 { margin: 0; color: var(--p); font-size: 2rem; }
+        .header-titles span { color: var(--a); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; }
 
-        .grid { display: grid; grid-template-columns: 1.1fr 1fr 380px; gap: 20px; }
-        .panel { background: #F8F9FF; border-radius: 25px; padding: 22px; border: 1px solid #E1E2EF; display: flex; flex-direction: column; min-height: 700px; }
-        .panel-h { font-weight: 900; color: var(--p); border-left: 6px solid var(--a); padding-left: 12px; margin-bottom: 20px; text-transform: uppercase; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 350px; gap: 20px; align-items: start; }
+        .panel { background: #F8F9FF; border-radius: 25px; padding: 20px; border: 1px solid #E1E2EF; min-height: 650px; }
+        .panel-h { font-weight: 900; color: var(--p); border-left: 5px solid var(--a); padding-left: 10px; margin-bottom: 20px; text-transform: uppercase; }
 
         /* Окна загрузки */
-        .upload-zone { background: white; border: 2px dashed #cbd5e0; border-radius: 20px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .preview-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; min-height: 90px; }
-        .img-preview { width: 80px; height: 80px; border-radius: 12px; border: 3px solid #eee; object-fit: contain; background: #fff; cursor: pointer; }
-        .img-preview.active { border-color: var(--a); }
-        
+        .drop-zone { background: white; border: 2px dashed #cbd5e0; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 15px; transition: 0.3s; }
+        .drop-zone:hover { border-color: var(--p); background: #f0eeff; }
+        .preview-area { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; min-height: 50px; }
+        .img-item { width: 70px; height: 70px; border-radius: 12px; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); object-fit: contain; cursor: pointer; }
+        .img-item.active { border-color: var(--a); transform: scale(1.05); }
+
         input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #ddd; margin-bottom: 10px; font-family: inherit; box-sizing: border-box; }
         label { font-size: 0.75rem; font-weight: 900; color: #636e72; margin-bottom: 5px; display: block; text-transform: uppercase; }
         
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; transition: 0.2s; color: white; margin-top: 10px; text-transform: uppercase; }
+        .btn-upload { background: var(--p); color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer; display: inline-block; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; }
+        .btn-action { width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; color: white; text-transform: uppercase; margin-top: 10px; }
         .btn-save { background: var(--ok); box-shadow: 0 5px 0 #008a6e; }
-        .btn-main { background: var(--p); box-shadow: 0 5px 0 #4834D4; }
-        .upload-btn { background: #a29bfe; padding: 8px 15px; font-size: 0.7rem; margin-bottom: 10px; display: inline-block; border-radius: 10px; color: white; cursor: pointer; }
+        .btn-create { background: var(--p); box-shadow: 0 5px 0 #4834D4; }
 
-        .hue-slider { -webkit-appearance: none; width: 100%; height: 10px; border-radius: 5px; background: linear-gradient(to right, red, yellow, green, cyan, blue, magenta, red); margin: 10px 0; }
-        .hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: white; border: 2px solid var(--p); border-radius: 50%; cursor: pointer; }
+        .cat-card { background: white; padding: 15px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #eee; }
     </style>
 </head>
 <body>
@@ -45,12 +45,11 @@
             <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" class="logo-img">
             <div class="header-titles">
                 <h2>Deutsch interaktiv</h2>
-                <span id="ui-subtitle">MASTERPIECE EDITOR</span>
+                <span id="ui-sub">MASTERPIECE EDITOR</span>
             </div>
         </div>
-        <div style="width: 280px;">
-            <label id="lbl-lang">ЯЗЫК / LANGUAGE</label>
-            <select id="uiLang" onchange="applyTranslation()">
+        <div style="width: 250px;">
+            <select id="uiLang" onchange="translateAll()">
                 <option value="ru">Русский (RU)</option>
                 <option value="de">Deutsch (DE)</option>
                 <option value="en">English (EN)</option>
@@ -67,31 +66,91 @@
         <div class="panel">
             <div class="panel-h" id="h2">МИР И ГЕРОИ</div>
             
-            <label id="lbl-theme">ЛОКАЦИЯ ФОНА</label>
-            <select id="theme-sel">
+            <label id="lbl-bg">ЛОКАЦИЯ ФОНА</label>
+            <select>
                 <option>Студия художника 🎨</option>
-                <option>Картинная галерея 🖼️</option>
-                <option>В огороде 🌻</option>
+                <option>Огород 🌻</option>
             </select>
 
-            <label style="margin-top:20px;" id="lbl-hero-title">ЗАГРУЗИТЬ ГЕРОЕВ (PNG)</label>
-            <div class="upload-zone">
-                <label class="upload-btn">📁 С компьютера <input type="file" hidden multiple accept="image/*" onchange="handleFiles(this, 'hero-pre')"></label>
-                <input type="text" placeholder="Или вставьте ссылку на картинку..." onchange="addByUrl(this, 'hero-pre')">
-                <div class="preview-grid" id="hero-pre"></div>
+            <label style="margin-top:20px;" id="lbl-up-h">ЗАГРУЗИТЬ ГЕРОЕВ (PNG)</label>
+            <div class="drop-zone">
+                <label class="btn-upload">📁 С КОМПЬЮТЕРА <input type="file" hidden multiple onchange="loadImg(this, 'pre-h')"></label>
+                <input type="text" placeholder="Или вставьте ссылку..." onchange="linkImg(this, 'pre-h')">
+                <div class="preview-area" id="pre-h"></div>
             </div>
 
-            <label id="lbl-gift-title">ЗАГРУЗИТЬ ПОДАРКИ</label>
-            <div class="upload-zone">
-                <label class="upload-btn">📁 С компьютера <input type="file" hidden multiple accept="image/*" onchange="handleFiles(this, 'gift-pre')"></label>
-                <input type="text" placeholder="Или вставьте ссылку на картинку..." onchange="addByUrl(this, 'gift-pre')">
-                <div class="preview-grid" id="gift-pre"></div>
+            <label id="lbl-up-g">ЗАГРУЗИТЬ ПОДАРКИ</label>
+            <div class="drop-zone">
+                <label class="btn-upload">📁 С КОМПЬЮТЕРА <input type="file" hidden multiple onchange="loadImg(this, 'pre-g')"></label>
+                <input type="text" placeholder="Или вставьте ссылку..." onchange="linkImg(this, 'pre-g')">
+                <div class="preview-area" id="pre-g"></div>
             </div>
         </div>
 
         <div class="panel">
             <div class="panel-h" id="h3">ИНТЕРФЕЙС</div>
-            <label id="lb1">Кнопка "Начать"</label><input type="text" id="i1">
-            <label id="lb2">Кнопка "Завершить"</label><input type="text" id="i2">
-            <label id="lb3">Кнопка "Повторить"</label><input type="text" id="i3">
-            <label id="
+            <label id="lt1">Начать</label><input type="text" id="i1">
+            <label id="lt2">Завершить</label><input type="text" id="i2">
+            <label id="lt3">Повторить</label><input type="text" id="i3">
+            <label id="lt4">Заново</label><input type="text" id="i4">
+            <label id="lt5">Победа</label><input type="text" id="i5">
+            
+            <button class="btn-action btn-save" id="btnS">💾 СОХРАНИТЬ ПРЕСЕТ</button>
+            <button class="btn-action btn-create" id="btnC">🚀 СОЗДАТЬ ИГРУ</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const polyglot = {
+        ru: { h1:"КАТЕГОРИИ", h2:"МИР И ГЕРОИ", h3:"ИНТЕРФЕЙС", bg:"ЛОКАЦИЯ", uph:"ЗАГРУЗИТЬ ГЕРОЕВ", upg:"ЗАГРУЗИТЬ ПОДАРКИ", s:"💾 СОХРАНИТЬ", c:"🚀 СОЗДАТЬ", v:["НАЧАТЬ","ЗАВЕРШИТЬ","ПОВТОРИТЬ","ЗАНОВО","ТЫ ГЕНИЙ!"] },
+        de: { h1:"KATEGORIEN", h2:"WELT & HELDEN", h3:"INTERFACE", bg:"HINTERGRUND", uph:"HELDEN LADEN", upg:"GABEN LADEN", s:"💾 SPEICHERN", c:"🚀 ERSTELLEN", v:["STARTEN","BEENDEN","NOCHMAL","NEUSTART","GENIAL!"] }
+    };
+
+    function translateAll() {
+        const l = document.getElementById('uiLang').value;
+        const d = polyglot[l] || polyglot.ru;
+        document.getElementById('h1').innerText = d.h1;
+        document.getElementById('h2').innerText = d.h2;
+        document.getElementById('h3').innerText = d.h3;
+        document.getElementById('lbl-bg').innerText = d.bg;
+        document.getElementById('lbl-up-h').innerText = d.uph;
+        document.getElementById('lbl-up-g').innerText = d.upg;
+        document.getElementById('btnS').innerText = d.s;
+        document.getElementById('btnC').innerText = d.c;
+        [1,2,3,4,5].forEach(n => document.getElementById('i'+n).value = d.v[n-1]);
+    }
+
+    function loadImg(input, target) {
+        [...input.files].forEach(file => {
+            const reader = new FileReader();
+            reader.onload = e => createPre(e.target.result, target);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function linkImg(input, target) {
+        if(input.value) { createPre(input.value, target); input.value = ''; }
+    }
+
+    function createPre(src, target) {
+        const img = document.createElement('img');
+        img.src = src; img.className = 'img-item';
+        img.onclick = function() { 
+            this.parentElement.querySelectorAll('img').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        };
+        document.getElementById(target).appendChild(img);
+    }
+
+    function init() {
+        const b = document.getElementById('cats-box');
+        ['Der', 'Die', 'Das'].forEach((t, i) => {
+            b.innerHTML += `<div class="cat-card"><label>КАТЕГОРИЯ ${i+1}</label><input type="text" value="${t}"><textarea placeholder="Слова..."></textarea></div>`;
+        });
+        translateAll();
+    }
+    window.onload = init;
+</script>
+</body>
+</html>
