@@ -1,1734 +1,201 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦋 Весёлый художник - Редактор игры</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --primary: #6C5CE7;
-            --accent: #FD79A8;
-            --success: #00b894;
-            --red: #ff7675;
-            --blue: #74b9ff;
-            --green: #55efc4;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* ЛЕВАЯ ПАНЕЛЬ */
-        .editor-panel {
-            width: 45%;
-            background: white;
-            overflow-y: auto;
-            box-shadow: 5px 0 30px rgba(0,0,0,0.3);
-        }
-        
-        .editor-panel::-webkit-scrollbar { width: 10px; }
-        .editor-panel::-webkit-scrollbar-track { background: #f0f0f0; }
-        .editor-panel::-webkit-scrollbar-thumb { 
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            border-radius: 10px;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, var(--primary), #5848c2);
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-        }
-        
-        .header h1 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        
-        .header .subtitle {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            font-weight: 600;
-            letter-spacing: 2px;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .section {
-            background: #f8f9fa;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 2px solid #e9ecef;
-        }
-        
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 900;
-            color: var(--primary);
-            margin-bottom: 20px;
-            padding-left: 15px;
-            border-left: 6px solid var(--accent);
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: #495057;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-        
-        input[type="text"], input[type="number"], select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-        
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
-        }
-        
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-            font-family: 'Courier New', monospace;
-        }
-        
-        /* ЗАГРУЗКА ФАЙЛОВ */
-        .upload-area {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .upload-btn {
-            flex: 1;
-            min-width: 150px;
-            padding: 12px;
-            border: 2px dashed var(--primary);
-            border-radius: 10px;
-            background: white;
-            cursor: pointer;
-            text-align: center;
-            font-weight: 700;
-            color: var(--primary);
-            transition: all 0.3s;
-            position: relative;
-        }
-        
-        .upload-btn:hover {
-            background: rgba(108, 92, 231, 0.1);
-            border-style: solid;
-            transform: translateY(-2px);
-        }
-        
-        .upload-btn input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .url-input {
-            flex: 2;
-            min-width: 200px;
-        }
-        
-        .file-info {
-            margin-top: 10px;
-            padding: 12px;
-            background: #d4edda;
-            border: 2px solid #28a745;
-            border-radius: 10px;
-            font-size: 0.9rem;
-            display: none;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .file-info.active {
-            display: flex;
-        }
-        
-        .file-info .icon {
-            font-size: 1.5rem;
-        }
-        
-        .file-info .text {
-            flex: 1;
-            font-weight: 600;
-        }
-        
-        .remove-file {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-        
-        /* ПЕРСОНАЖИ */
-        .chars-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-        
-        .char-item {
-            aspect-ratio: 1;
-            border: 3px solid #dee2e6;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            cursor: pointer;
-            background: white;
-            transition: all 0.3s;
-        }
-        
-        .char-item:hover {
-            transform: scale(1.1);
-            border-color: var(--primary);
-        }
-        
-        .char-item.active {
-            border-color: var(--accent);
-            background: linear-gradient(135deg, #fff0f5, #ffe6f0);
-            box-shadow: 0 5px 15px rgba(253, 121, 168, 0.5);
-            transform: scale(1.15);
-        }
-        
-        /* КНОПКИ */
-        .actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 20px 0;
-            border-top: 2px solid #f0f0f0;
-        }
-        
-        .btn {
-            flex: 1;
-            padding: 18px;
-            border: none;
-            border-radius: 12px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #5848c2);
-            color: white;
-            box-shadow: 0 6px 0 #4834D4;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 #4834D4;
-        }
-        
-        .btn-primary:active {
-            transform: translateY(2px);
-            box-shadow: 0 4px 0 #4834D4;
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #00a884);
-            color: white;
-            box-shadow: 0 6px 0 #00896c;
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 #00896c;
-        }
-        
-        .btn-success:active {
-            transform: translateY(2px);
-            box-shadow: 0 4px 0 #00896c;
-        }
-        
-        /* ПРАВАЯ ПАНЕЛЬ */
-        .preview-panel {
-            width: 55%;
-            display: flex;
-            flex-direction: column;
-            background: #2d3436;
-        }
-        
-        .preview-header {
-            background: #2d3436;
-            color: white;
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .preview-header h2 {
-            font-size: 1.4rem;
-        }
-        
-        .preview-controls {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .preview-btn {
-            padding: 10px 20px;
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            transition: all 0.3s;
-        }
-        
-        .preview-btn:hover {
-            background: white;
-            color: #2d3436;
-        }
-        
-        .preview-content {
-            flex: 1;
-            background: #f5f5f5;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .preview-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: white;
-        }
-        
-        .preview-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #636e72;
-            padding: 40px;
-            text-align: center;
-        }
-        
-        .preview-placeholder-icon {
-            font-size: 6rem;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-        
-        .preview-placeholder h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        
-        /* МОДАЛЬНОЕ ОКНО */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .modal.active {
-            display: flex;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 900px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            cursor: pointer;
-            color: #636e72;
-            background: none;
-            border: none;
-            transition: all 0.3s;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-        
-        .modal-close:hover {
-            color: white;
-            background: var(--red);
-            transform: rotate(90deg);
-        }
-        
-        .modal h3 {
-            color: var(--primary);
-            font-size: 2rem;
-            margin-bottom: 20px;
-            padding-right: 40px;
-        }
-        
-        .modal p {
-            color: #636e72;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-        
-        .code-box {
-            background: #2d3436;
-            color: #00b894;
-            padding: 20px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            margin: 20px 0;
-            position: relative;
-            max-height: 400px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        
-        .copy-btn {
-            position: sticky;
-            top: 10px;
-            right: 10px;
-            float: right;
-            padding: 10px 20px;
-            background: var(--success);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            margin-bottom: 10px;
-            z-index: 1;
-        }
-        
-        .copy-btn:hover {
-            background: #00a884;
-        }
-        
-        .copy-btn.copied {
-            background: #28a745;
-        }
-        
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .container {
-                flex-direction: column;
-            }
-            
-            .editor-panel, .preview-panel {
-                width: 100%;
-            }
-            
-            .preview-panel {
-                min-height: 600px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Весёлый художник — Редактор игры</title>
+<style>
+/* Общие стили */
+body, html {margin:0; padding:0; font-family:sans-serif; overflow-x:hidden;}
+.wrapper {display:block; width:100%; height:100vh; position:relative; background:#e0f7fa;}
+button {cursor:pointer; font-family:sans-serif;}
+
+/* БАБОЧКА */
+#butterflyWrap {position:absolute; top:60px; left:50%; transform:translateX(-50%);}
+.segment {transition: all 0.6s ease; stroke:#888; stroke-width:3; cursor:pointer;}
+.segment:hover {filter:brightness(1.05);}
+@keyframes flap {0%{transform:scaleX(1);}50%{transform:scaleX(0.92);}100%{transform:scaleX(1);}}
+@keyframes flyUp {0%{transform:translateX(-50%) translateY(0);}100%{transform:translateX(-50%) translateY(-600px);opacity:0;}}
+@keyframes floatIdle {0%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}100%{transform:translateX(-50%) translateY(0);}}
+.butterfly-flap {animation:flap 0.5s ease-in-out 3;}
+.butterfly-fly {animation:flyUp 3s ease-in-out forwards;}
+.butterfly-idle {animation:floatIdle 4s ease-in-out infinite;}
+
+/* РОЗА */
+.petal {stroke:#999; stroke-width:2; transition: all 0.6s ease;}
+.petal.glow {fill:#ff1a1a !important; filter:drop-shadow(0 0 12px #ff4d4d);}
+#rose {width:220px; position:absolute; bottom:40px; left:50%; transform:translateX(-50%);}
+.life-drop {font-size:22px;}
+
+/* ДАЛЬШИЕ Стили */
+#timer {position:absolute; top:20px; left:20px; font-weight:900; font-size:1.5rem;}
+#lives {position:absolute; top:60px; left:20px; display:flex; gap:8px;}
+#victoryMessage {position:absolute; top:40%; left:50%; transform:translate(-50%,-50%); font-size:2rem; font-weight:900; color:#6C5CE7; display:none; text-align:center;}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <!-- ЛЕВАЯ ПАНЕЛЬ -->
-    <div class="editor-panel">
-        <div class="header">
-            <h1>🦋 Весёлый художник</h1>
-            <div class="subtitle">РЕДАКТОР ИГРЫ | DEUTSCH INTERAKTIV</div>
-        </div>
-        
-        <div class="content">
-            <!-- ЯЗЫК ИГРЫ -->
-            <div class="section">
-                <div class="section-title">🌍 Язык игры</div>
-                <div class="form-group">
-                    <label>Выберите язык для надписей в игре</label>
-                    <select id="gameLang" onchange="updateGameLanguage()">
-                        <option value="ru">🇷🇺 Русский (Russian)</option>
-                        <option value="de" selected>🇩🇪 Deutsch (German)</option>
-                        <option value="en">🇬🇧 English</option>
-                        <option value="es">🇪🇸 Español (Spanish)</option>
-                        <option value="it">🇮🇹 Italiano (Italian)</option>
-                        <option value="fr">🇫🇷 Français (French)</option>
-                        <option value="zh">🇨🇳 中文 (Chinese)</option>
-                        <option value="ja">🇯🇵 日本語 (Japanese)</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- ФОН -->
-            <div class="section">
-                <div class="section-title">🎨 Фон игры</div>
-                <div class="form-group">
-                    <label>Готовые фоны</label>
-                    <select id="bgTheme" onchange="updateBackground()">
-                        <option value="garden" selected>🌻 Огород</option>
-                        <option value="meadow">🌸 Луг</option>
-                        <option value="forest">🌲 Лес</option>
-                        <option value="space">🚀 Космос</option>
-                        <option value="ocean">🌊 Океан</option>
-                        <option value="custom">🎨 Свой фон</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Или загрузите свой фон</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 С компьютера
-                            <input type="file" accept="image/*" onchange="handleFileUpload('bg', this)">
-                        </label>
-                        <input type="text" class="url-input" id="bgUrl" placeholder="🔗 Или вставьте URL картинки">
-                    </div>
-                    <div class="file-info" id="bgInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="bgInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('bg')">✕</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- ГЛАВНЫЙ ПЕРСОНАЖ -->
-            <div class="section">
-                <div class="section-title">👤 Главный персонаж</div>
-                <div class="form-group">
-                    <label>Выберите персонажа (кликните на нужный)</label>
-                    <div class="chars-grid" id="heroGrid">
-                        <div class="char-item active" data-value="🦋" onclick="selectCharacter('hero', this)">🦋</div>
-                        <div class="char-item" data-value="👨‍🎨" onclick="selectCharacter('hero', this)">👨‍🎨</div>
-                        <div class="char-item" data-value="👩‍🎨" onclick="selectCharacter('hero', this)">👩‍🎨</div>
-                        <div class="char-item" data-value="🐝" onclick="selectCharacter('hero', this)">🐝</div>
-                        <div class="char-item" data-value="🐸" onclick="selectCharacter('hero', this)">🐸</div>
-                        <div class="char-item" data-value="🐱" onclick="selectCharacter('hero', this)">🐱</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Или загрузите GIF-анимацию</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить GIF
-                            <input type="file" accept="image/gif" onchange="handleFileUpload('hero', this)">
-                        </label>
-                        <input type="text" class="url-input" id="heroUrl" placeholder="🔗 URL GIF">
-                    </div>
-                    <div class="file-info" id="heroInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="heroInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('hero')">✕</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- ПЕРСОНАЖ ПРИ ОШИБКЕ -->
-            <div class="section">
-                <div class="section-title">⚠️ Персонаж при ошибке</div>
-                <div class="form-group">
-                    <label>Выберите персонажа (кликните на нужный)</label>
-                    <div class="chars-grid" id="enemyGrid">
-                        <div class="char-item active" data-value="😠🐝" onclick="selectCharacter('enemy', this)">😠🐝</div>
-                        <div class="char-item" data-value="⚡" onclick="selectCharacter('enemy', this)">⚡</div>
-                        <div class="char-item" data-value="🌧️" onclick="selectCharacter('enemy', this)">🌧️</div>
-                        <div class="char-item" data-value="👻" onclick="selectCharacter('enemy', this)">👻</div>
-                        <div class="char-item" data-value="🦇" onclick="selectCharacter('enemy', this)">🦇</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Или загрузите GIF</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить GIF
-                            <input type="file" accept="image/gif" onchange="handleFileUpload('enemy', this)">
-                        </label>
-                        <input type="text" class="url-input" id="enemyUrl" placeholder="🔗 URL GIF">
-                    </div>
-                    <div class="file-info" id="enemyInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="enemyInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('enemy')">✕</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- НАГРАДА -->
-            <div class="section">
-                <div class="section-title">🎁 Награда за успех</div>
-                <div class="form-group">
-                    <label>Выберите награду (кликните на нужную)</label>
-                    <div class="chars-grid" id="rewardGrid">
-                        <div class="char-item active" data-value="🌹" onclick="selectCharacter('reward', this)">🌹</div>
-                        <div class="char-item" data-value="🏆" onclick="selectCharacter('reward', this)">🏆</div>
-                        <div class="char-item" data-value="⭐" onclick="selectCharacter('reward', this)">⭐</div>
-                        <div class="char-item" data-value="🏅" onclick="selectCharacter('reward', this)">🏅</div>
-                        <div class="char-item" data-value="🎉" onclick="selectCharacter('reward', this)">🎉</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Или загрузите GIF</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить GIF
-                            <input type="file" accept="image/gif" onchange="handleFileUpload('reward', this)">
-                        </label>
-                        <input type="text" class="url-input" id="rewardUrl" placeholder="🔗 URL GIF">
-                    </div>
-                    <div class="file-info" id="rewardInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="rewardInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('reward')">✕</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- ЗВУКИ -->
-            <div class="section">
-                <div class="section-title">🔊 Звуки и музыка</div>
-                <div class="form-group">
-                    <label>Звук правильного ответа</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить
-                            <input type="file" accept="audio/*" onchange="handleFileUpload('soundSuccess', this)">
-                        </label>
-                        <input type="text" class="url-input" id="soundSuccessUrl" placeholder="🔗 URL звука (.mp3, .wav)">
-                    </div>
-                    <div class="file-info" id="soundSuccessInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="soundSuccessInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('soundSuccess')">✕</button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Звук ошибки</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить
-                            <input type="file" accept="audio/*" onchange="handleFileUpload('soundError', this)">
-                        </label>
-                        <input type="text" class="url-input" id="soundErrorUrl" placeholder="🔗 URL звука">
-                    </div>
-                    <div class="file-info" id="soundErrorInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="soundErrorInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('soundError')">✕</button>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Фоновая музыка</label>
-                    <div class="upload-area">
-                        <label class="upload-btn">
-                            📁 Загрузить
-                            <input type="file" accept="audio/*" onchange="handleFileUpload('musicBg', this)">
-                        </label>
-                        <input type="text" class="url-input" id="musicBgUrl" placeholder="🔗 URL музыки">
-                    </div>
-                    <div class="file-info" id="musicBgInfo">
-                        <span class="icon">✅</span>
-                        <span class="text" id="musicBgInfoText"></span>
-                        <button class="remove-file" onclick="removeFile('musicBg')">✕</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- СЛОВА -->
-            <div class="section">
-                <div class="section-title">📚 Слова для игры</div>
-                <div class="form-group">
-                    <label>Der (синий) - мужской род</label>
-                    <textarea id="wordsDer" placeholder="Введите слова через запятую">Hund, Fisch, Vogel, Hamster, Igel, Hai, Affe, Delphin, Elefant</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Die (красный) - женский род</label>
-                    <textarea id="wordsDie" placeholder="Введите слова через запятую">Katze, Maus, Spinne, Gans, Fliege, Kuh, Ziege, Biene, Ameise, Schlange</textarea>
-                </div>
-                <div class="form-group">
-                    <label>Das (зелёный) - средний род</label>
-                    <textarea id="wordsDas" placeholder="Введите слова через запятую">Schwein, Reh, Pferd, Huhn, Schaf, Kaninchen, Nashorn, Krokodil, Wildschwein</textarea>
-                </div>
-            </div>
-            
-            <!-- НАСТРОЙКИ -->
-            <div class="section">
-                <div class="section-title">⚙️ Настройки игры</div>
-                <div class="form-group">
-                    <label>Уровень сложности</label>
-                    <select id="gameLevel">
-                        <option value="easy" selected>🦋 Лёгкий (Бабочка)</option>
-                        <option value="medium">🌺 Средний (Георгина)</option>
-                        <option value="hard">🏠 Сложный (Дом)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Время на задание (секунды)</label>
-                    <input type="number" id="timerValue" value="20" min="5" max="120">
-                </div>
-                <div class="form-group">
-                    <label>Текст победы</label>
-                    <input type="text" id="winText" value="Wir gratulieren! Gute Arbeit!">
-                </div>
-                <div class="form-group">
-                    <label>Текст при ошибке</label>
-                    <input type="text" id="errorText" value="Versuch noch einmal!">
-                </div>
-            </div>
-            
-            <!-- КНОПКИ -->
-            <div class="actions">
-                <button class="btn btn-primary" onclick="showPreview()">
-                    👁️ Предпросмотр
-                </button>
-                <button class="btn btn-success" onclick="generateIframeCode()">
-                    📋 Получить код
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ПРАВАЯ ПАНЕЛЬ -->
-    <div class="preview-panel">
-        <div class="preview-header">
-            <h2>🎮 Предпросмотр игры</h2>
-            <div class="preview-controls">
-                <button class="preview-btn" onclick="showPreview()">🔄 Обновить</button>
-            </div>
-        </div>
-        <div class="preview-content" id="previewArea">
-            <div class="preview-placeholder">
-                <div class="preview-placeholder-icon">🎨</div>
-                <h3>Предпросмотр игры</h3>
-                <p>Настройте параметры слева и нажмите "Предпросмотр"<br>чтобы увидеть начало вашей игры</p>
-            </div>
-        </div>
-    </div>
+<!-- Экран выбора роли -->
+<div id="roleScreen" style="position:fixed; inset:0; background:linear-gradient(135deg,#6C5CE7,#FD79A8); display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; z-index:9999;">
+<h1 style="font-size:2.5rem;">Весёлый художник</h1>
+<div style="display:flex; gap:40px; margin-top:40px;">
+<button onclick="enterTeacher()" style="padding:20px 40px; font-size:1.2rem;">👩‍🏫 Учитель</button>
+<button onclick="enterStudent()" style="padding:20px 40px; font-size:1.2rem;">🎓 Ученик</button>
+</div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО ДЛЯ КОДА -->
-<div class="modal" id="codeModal">
-    <div class="modal-content">
-        <button class="modal-close" onclick="closeCodeModal()">×</button>
-        <h3>📋 Код iframe для вставки в Genially</h3>
-        <p><strong>Инструкция:</strong></p>
-        <ol style="margin-left: 20px; margin-bottom: 20px; line-height: 1.8;">
-            <li>Скопируйте код ниже (нажмите кнопку "Копировать")</li>
-            <li>Откройте вашу презентацию в Genially</li>
-            <li>Нажмите: <strong>Вставка → HTML/Embed</strong></li>
-            <li>Вставьте скопированный код</li>
-            <li>Нажмите "Insert" - готово! 🎉</li>
-        </ol>
-        <div class="code-box">
-            <button class="copy-btn" id="copyBtn" onclick="copyIframeCode()">📋 Копировать</button>
-            <pre id="iframeCodeDisplay"></pre>
-        </div>
-        <p style="font-size: 0.9rem; color: #28a745; margin-top: 15px;">
-            ✅ Этот код содержит полную игру со всеми вашими настройками<br>
-            ✅ Все картинки и звуки встроены - работает автономно<br>
-            ✅ Можно вставлять в Genially, Google Slides, на сайты
-        </p>
-    </div>
+<div class="wrapper">
+
+<!-- Панель редактора (только учитель) -->
+<div class="panel" style="padding:20px;">
+<label>Выбор шаблона:</label>
+<div style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:10px;">
+<button onclick="setTemplate('garden')">🌷 Сад</button>
+<button onclick="setTemplate('space')">🚀 Космос</button>
+<button onclick="setTemplate('ocean')">🌊 Океан</button>
+<button onclick="setTemplate('castle')">🏰 Замок</button>
 </div>
+<label>Выбор уровня:</label>
+<select id="gameLvl">
+<option value="butterfly">Лёгкий — Бабочка</option>
+<option value="house">Средний — Георгина</option>
+<option value="garden">Сложный — Дом</option>
+</select>
+<button onclick="exportGame()">📦 Экспорт игры</button>
+<button onclick="changePassword()">🔐 Сменить пароль</button>
+</div>
+
+<!-- Game Area -->
+<div id="gameArea" style="width:100%; height:100vh; position:relative; overflow:hidden; background:#d0f0c0;">
+
+<!-- Таймер и жизни -->
+<div id="timer">⏱ 20</div>
+<div id="lives"></div>
+
+<!-- Бабочка -->
+<div id="butterflyWrap">
+<svg id="butterfly" viewBox="0 0 600 400" style="width:420px;">
+<rect x="290" y="130" width="20" height="160" rx="10" fill="#444"/>
+<circle cx="300" cy="110" r="20" fill="#444"/>
+<!-- Левые крылья -->
+<ellipse class="segment" data-id="0" cx="180" cy="140" rx="120" ry="90" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="1" cx="160" cy="250" rx="100" ry="80" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="2" cx="230" cy="200" rx="70" ry="60" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="3" cx="120" cy="190" rx="60" ry="50" fill="#f0f0f0"/>
+<!-- Правые крылья -->
+<ellipse class="segment" data-id="4" cx="420" cy="140" rx="120" ry="90" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="5" cx="440" cy="250" rx="100" ry="80" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="6" cx="370" cy="200" rx="70" ry="60" fill="#f0f0f0"/>
+<ellipse class="segment" data-id="7" cx="480" cy="190" rx="60" ry="50" fill="#f0f0f0"/>
+</svg>
+</div>
+
+<!-- Роза -->
+<svg id="rose" viewBox="0 0 400 400">
+<g id="petals">
+<ellipse class="petal" cx="200" cy="140" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="260" cy="170" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="260" cy="230" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="200" cy="260" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="140" cy="230" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="140" cy="170" rx="60" ry="40" fill="#eee"/>
+<ellipse class="petal" cx="200" cy="200" rx="50" ry="35" fill="#eee"/>
+<ellipse class="petal" cx="200" cy="120" rx="40" ry="25" fill="#eee"/>
+<ellipse class="petal" cx="280" cy="200" rx="40" ry="25" fill="#eee"/>
+<ellipse class="petal" cx="120" cy="200" rx="40" ry="25" fill="#eee"/>
+</g>
+<circle cx="200" cy="200" r="25" fill="#ccc"/>
+<rect x="190" y="260" width="20" height="120" fill="#9ccc65"/>
+<ellipse cx="160" cy="320" rx="40" ry="20" fill="#9ccc65"/>
+<ellipse cx="240" cy="340" rx="40" ry="20" fill="#9ccc65"/>
+</svg>
+
+<!-- Георгина -->
+<svg id="dahlia" viewBox="0 0 400 400" style="width:300px; position:absolute; top:80px; left:50%; transform:translateX(-50%); display:none;">
+<g id="dahliaPetals">
+<ellipse class="dPetal" cx="200" cy="80" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="280" cy="120" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="320" cy="200" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="280" cy="280" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="200" cy="320" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="120" cy="280" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="80" cy="200" rx="40" ry="70" fill="#eee"/>
+<ellipse class="dPetal" cx="120" cy="120" rx="40" ry="70" fill="#eee"/>
+</g>
+<circle cx="200" cy="200" r="40" fill="#ccc"/>
+</svg>
+
+<!-- Дом -->
+<svg id="house" viewBox="0 0 500 400" style="width:400px; position:absolute; top:60px; left:50%; transform:translateX(-50%); display:none;">
+<rect class="houseSeg" x="150" y="180" width="200" height="150" fill="#eee"/>
+<polygon class="houseSeg" points="140,180 360,180 250,80" fill="#eee"/>
+<rect class="houseSeg" x="220" y="240" width="60" height="90" fill="#eee"/>
+<rect class="houseSeg" x="170" y="210" width="40" height="40" fill="#eee"/>
+<rect class="houseSeg" x="290" y="210" width="40" height="40" fill="#eee"/>
+</svg>
+
+<!-- Финальное сообщение -->
+<div id="victoryMessage"></div>
+
+</div>
+
+<!-- Звуки -->
+<audio id="flySound" preload="auto">
+<source src="https://assets.mixkit.co/sfx/preview/mixkit-fairy-tale-magic-sparkle-871.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-// КОНФИГУРАЦИЯ ИГРЫ
-const gameConfig = {
-    lang: 'de',
-    bg: { type: 'garden', data: '' },
-    hero: { type: 'emoji', value: '🦋', data: '' },
-    enemy: { type: 'emoji', value: '😠🐝', data: '' },
-    reward: { type: 'emoji', value: '🌹', data: '' },
-    sounds: {
-        success: '',
-        error: '',
-        bgMusic: ''
-    },
-    words: {
-        der: 'Hund, Fisch, Vogel, Hamster, Igel, Hai, Affe, Delphin, Elefant',
-        die: 'Katze, Maus, Spinne, Gans, Fliege, Kuh, Ziege, Biene, Ameise, Schlange',
-        das: 'Schwein, Reh, Pferd, Huhn, Schaf, Kaninchen, Nashorn, Krokodil, Wildschwein'
-    },
-    settings: {
-        level: 'easy',
-        timer: 20,
-        winText: 'Wir gratulieren! Gute Arbeit!',
-        errorText: 'Versuch noch einmal!'
-    }
+// Переменные
+let segments = document.querySelectorAll(".segment");
+let petals = document.querySelectorAll(".petal");
+let paintedSegments = 0;
+let paintedPetals = 0;
+let lives = 3;
+let timerInterval;
+let timeLeft = 20;
+const butterflyWrap = document.getElementById("butterflyWrap");
+const genderColors = { die:"#ff0000", der:"#2196f3", das:"#4caf50" };
+const dPetals = document.querySelectorAll(".dPetal");
+let dahliaIndex = 0;
+const houseSegments = document.querySelectorAll(".houseSeg");
+let houseIndex = 0;
+
+const dictionary = {
+victory:{ru:"Поздравляем! Отличная работа!", de:"Wir gratulieren! Gute Arbeit!", en:"Congratulations! Great job!"}
 };
 
-// ПЕРЕВОДЫ ДЛЯ ИГРЫ
-const gameTranslations = {
-    ru: {
-        selectWord: 'Выберите слово:',
-        timer: 'Время:',
-        progress: 'Прогресс',
-        start: 'Начать',
-        winTitle: 'Поздравляем!',
-        tryAgain: 'Попробуй снова'
-    },
-    de: {
-        selectWord: 'Wähle ein Wort:',
-        timer: 'Zeit:',
-        progress: 'Fortschritt',
-        start: 'Start',
-        winTitle: 'Glückwunsch!',
-        tryAgain: 'Nochmal'
-    },
-    en: {
-        selectWord: 'Choose a word:',
-        timer: 'Time:',
-        progress: 'Progress',
-        start: 'Start',
-        winTitle: 'Congratulations!',
-        tryAgain: 'Try again'
-    },
-    es: {
-        selectWord: 'Elige una palabra:',
-        timer: 'Tiempo:',
-        progress: 'Progreso',
-        start: 'Comenzar',
-        winTitle: '¡Felicidades!',
-        tryAgain: 'Intentar de nuevo'
-    },
-    it: {
-        selectWord: 'Scegli una parola:',
-        timer: 'Tempo:',
-        progress: 'Progresso',
-        start: 'Inizia',
-        winTitle: 'Congratulazioni!',
-        tryAgain: 'Riprova'
-    },
-    fr: {
-        selectWord: 'Choisissez un mot:',
-        timer: 'Temps:',
-        progress: 'Progrès',
-        start: 'Commencer',
-        winTitle: 'Félicitations!',
-        tryAgain: 'Réessayer'
-    },
-    zh: {
-        selectWord: '选择一个词:',
-        timer: '时间:',
-        progress: '进度',
-        start: '开始',
-        winTitle: '恭喜!',
-        tryAgain: '再试一次'
-    },
-    ja: {
-        selectWord: '単語を選択:',
-        timer: '時間:',
-        progress: '進捗',
-        start: 'スタート',
-        winTitle: 'おめでとう!',
-        tryAgain: 'もう一度'
-    }
-};
-
-// ОБНОВЛЕНИЕ ЯЗЫКА ИГРЫ
-function updateGameLanguage() {
-    gameConfig.lang = document.getElementById('gameLang').value;
+// Роли
+function enterTeacher(){
+    const savedPass = localStorage.getItem("teacherPass") || "1234";
+    const input = prompt("Введите пароль:");
+    if(input === savedPass){
+        document.getElementById("roleScreen").style.display="none";
+        document.querySelector(".wrapper").style.display="block";
+    } else { alert("Неверный пароль"); }
+}
+function enterStudent(){
+    document.getElementById("roleScreen").style.display="none";
+    document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+}
+function changePassword(){
+    const newPass = prompt("Введите новый пароль:");
+    if(newPass){ localStorage.setItem("teacherPass", newPass); alert("Пароль сохранён"); }
 }
 
-// ОБНОВЛЕНИЕ ФОНА
-function updateBackground() {
-    gameConfig.bg.type = document.getElementById('bgTheme').value;
+// Шаблоны
+function setTemplate(type){
+    const gameArea = document.getElementById("gameArea");
+    if(type==="garden"){ gameArea.style.background="#d0f0c0"; }
+    if(type==="space"){ gameArea.style.background="#0d1b2a"; }
+    if(type==="ocean"){ gameArea.style.background="#a0e1ff"; }
+    if(type==="castle"){ gameArea.style.background="#f5f5dc"; }
 }
 
-// ЗАГРУЗКА ФАЙЛА
-function handleFileUpload(type, input) {
-    const file = input.files[0];
-    if (!file) return;
-    
-    console.log('Загрузка файла:', type, file.name);
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const data = e.target.result;
-        const info = document.getElementById(type + 'Info');
-        const infoText = document.getElementById(type + 'InfoText');
-        
-        // Показываем информацию о загрузке
-        if (info && infoText) {
-            infoText.textContent = 'Загружено: ' + file.name;
-            info.classList.add('active');
-        }
-        
-        // Сохраняем в конфигурацию
-        if (type === 'bg') {
-            gameConfig.bg.type = 'custom';
-            gameConfig.bg.data = data;
-        } else if (['hero', 'enemy', 'reward'].includes(type)) {
-            gameConfig[type].type = 'custom';
-            gameConfig[type].data = data;
-        } else if (type.startsWith('sound') || type === 'musicBg') {
-            const soundKey = type === 'soundSuccess' ? 'success' : 
-                           type === 'soundError' ? 'error' : 'bgMusic';
-            gameConfig.sounds[soundKey] = data;
-        }
-        
-        console.log('Файл загружен и сохранён в конфигурацию:', type);
-    };
-    reader.readAsDataURL(file);
-}
-
-// УДАЛЕНИЕ ФАЙЛА
-function removeFile(type) {
-    const info = document.getElementById(type + 'Info');
-    if (info) {
-        info.classList.remove('active');
-    }
-    
-    // Очищаем из конфигурации
-    if (type === 'bg') {
-        gameConfig.bg.data = '';
-        gameConfig.bg.type = document.getElementById('bgTheme').value;
-    } else if (['hero', 'enemy', 'reward'].includes(type)) {
-        gameConfig[type].type = 'emoji';
-        gameConfig[type].data = '';
-    } else if (type.startsWith('sound') || type === 'musicBg') {
-        const soundKey = type === 'soundSuccess' ? 'success' : 
-                       type === 'soundError' ? 'error' : 'bgMusic';
-        gameConfig.sounds[soundKey] = '';
-    }
-    
-    console.log('Файл удалён:', type);
-}
-
-// ВЫБОР ПЕРСОНАЖА
-function selectCharacter(type, element) {
-    console.log('Выбор персонажа:', type, element.dataset.value);
-    
-    // Убираем active со всех в этой группе
-    const grid = element.parentElement;
-    grid.querySelectorAll('.char-item').forEach(item => {
-        item.classList.remove('active');
-    });
-    
-    // Добавляем active выбранному
-    element.classList.add('active');
-    
-    // Сохраняем в конфигурацию
-    gameConfig[type].type = 'emoji';
-    gameConfig[type].value = element.dataset.value;
-    gameConfig[type].data = '';
-    
-    console.log('Персонаж выбран и сохранён:', type, gameConfig[type].value);
-}
-
-// СБОР ВСЕХ ДАННЫХ
-function collectAllData() {
-    // Язык
-    gameConfig.lang = document.getElementById('gameLang').value;
-    
-    // Фон
-    const bgUrl = document.getElementById('bgUrl').value;
-    if (bgUrl) {
-        gameConfig.bg.type = 'custom';
-        gameConfig.bg.data = bgUrl;
-    }
-    
-    // URL для персонажей
-    const heroUrl = document.getElementById('heroUrl').value;
-    if (heroUrl) {
-        gameConfig.hero.type = 'url';
-        gameConfig.hero.data = heroUrl;
-    }
-    
-    const enemyUrl = document.getElementById('enemyUrl').value;
-    if (enemyUrl) {
-        gameConfig.enemy.type = 'url';
-        gameConfig.enemy.data = enemyUrl;
-    }
-    
-    const rewardUrl = document.getElementById('rewardUrl').value;
-    if (rewardUrl) {
-        gameConfig.reward.type = 'url';
-        gameConfig.reward.data = rewardUrl;
-    }
-    
-    // URL для звуков
-    const soundSuccessUrl = document.getElementById('soundSuccessUrl').value;
-    if (soundSuccessUrl) gameConfig.sounds.success = soundSuccessUrl;
-    
-    const soundErrorUrl = document.getElementById('soundErrorUrl').value;
-    if (soundErrorUrl) gameConfig.sounds.error = soundErrorUrl;
-    
-    const musicBgUrl = document.getElementById('musicBgUrl').value;
-    if (musicBgUrl) gameConfig.sounds.bgMusic = musicBgUrl;
-    
-    // Слова
-    gameConfig.words.der = document.getElementById('wordsDer').value;
-    gameConfig.words.die = document.getElementById('wordsDie').value;
-    gameConfig.words.das = document.getElementById('wordsDas').value;
-    
-    // Настройки
-    gameConfig.settings.level = document.getElementById('gameLevel').value;
-    gameConfig.settings.timer = parseInt(document.getElementById('timerValue').value);
-    gameConfig.settings.winText = document.getElementById('winText').value;
-    gameConfig.settings.errorText = document.getElementById('errorText').value;
-    
-    console.log('Собрана конфигурация:', gameConfig);
-}
-
-// ГЕНЕРАЦИЯ HTML ИГРЫ
-function generateGameHTML() {
-    collectAllData();
-    
-    const t = gameTranslations[gameConfig.lang] || gameTranslations.de;
-    
-    // Фон
-    const bgStyles = {
-        garden: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
-        meadow: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
-        forest: 'linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%)',
-        space: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
-        ocean: 'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%)'
-    };
-    
-    let bgStyle = '';
-    if (gameConfig.bg.data) {
-        bgStyle = `background-image: url('${gameConfig.bg.data}'); background-size: cover; background-position: center;`;
-    } else {
-        bgStyle = `background: ${bgStyles[gameConfig.bg.type] || bgStyles.garden};`;
-    }
-    
-    // Персонажи
-    const heroDisplay = gameConfig.hero.data ? 
-        `<img src="${gameConfig.hero.data}" style="width:100%; height:100%; object-fit:contain;">` : 
-        gameConfig.hero.value;
-    
-    const enemyDisplay = gameConfig.enemy.data ? 
-        `<img src="${gameConfig.enemy.data}" style="width:100%; height:100%; object-fit:contain;">` : 
-        gameConfig.enemy.value;
-    
-    const rewardDisplay = gameConfig.reward.data ? 
-        `<img src="${gameConfig.reward.data}" style="width:100%; height:100%; object-fit:contain;">` : 
-        gameConfig.reward.value;
-    
-    // Слова
-    const wordsData = {
-        der: gameConfig.words.der.split(',').map(w => w.trim()).filter(w => w),
-        die: gameConfig.words.die.split(',').map(w => w.trim()).filter(w => w),
-        das: gameConfig.words.das.split(',').map(w => w.trim()).filter(w => w)
-    };
-    
-    return `<!DOCTYPE html>
-<html lang="${gameConfig.lang}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Весёлый художник</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Comic Sans MS', Arial, sans-serif;
-            ${bgStyle}
-            overflow: hidden;
-        }
-        .game-screen {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        .top-bar {
-            height: 80px;
-            background: rgba(255,255,255,0.95);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            z-index: 100;
-        }
-        .progress-container {
-            flex: 1;
-            max-width: 400px;
-            height: 50px;
-            background: #f0f0f0;
-            border-radius: 25px;
-            border: 3px solid #6C5CE7;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #6C5CE7, #FD79A8);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        .water-drops {
-            position: absolute;
-            top: 50%;
-            left: 10px;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 5px;
-            z-index: 1;
-        }
-        .water-drop {
-            font-size: 1.5rem;
-            animation: dropIn 0.5s ease;
-        }
-        @keyframes dropIn {
-            from { transform: scale(0); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        .timer {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #6C5CE7;
-            min-width: 100px;
-            text-align: center;
-        }
-        .timer.warning { color: #e74c3c; animation: pulse 0.5s infinite; }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-        .game-area {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            padding: 20px;
-        }
-        .butterfly-container {
-            width: 400px;
-            height: 400px;
-            position: relative;
-        }
-        .butterfly {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        .butterfly.animated {
-            animation: fly 4s ease-in-out infinite;
-        }
-        @keyframes fly {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(30px, -30px); }
-            50% { transform: translate(0, -60px); }
-            75% { transform: translate(-30px, -30px); }
-        }
-        .wing {
-            position: absolute;
-            width: 150px;
-            height: 200px;
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            border: 5px solid #2d3436;
-            background: #e0e0e0;
-            display: flex;
-            flex-wrap: wrap;
-        }
-        .wing-left { left: 50px; top: 100px; transform: rotate(-15deg); }
-        .wing-right { right: 50px; top: 100px; transform: rotate(15deg); }
-        .wing-segment {
-            flex: 1 1 33%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: white;
-            text-align: center;
-            padding: 3px;
-            transition: all 0.5s ease;
-        }
-        .wing-segment.colored {
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.5), 0 0 15px currentColor;
-        }
-        .butterfly-body {
-            position: absolute;
-            width: 50px;
-            height: 180px;
-            background: linear-gradient(180deg, #2d3436, #636e72);
-            border-radius: 25px;
-            left: 50%;
-            top: 130px;
-            transform: translateX(-50%);
-        }
-        .butterfly-head {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #2d3436;
-            border-radius: 50%;
-            left: 50%;
-            top: 110px;
-            transform: translateX(-50%);
-        }
-        .antenna {
-            position: absolute;
-            width: 2px;
-            height: 30px;
-            background: #2d3436;
-            top: -25px;
-        }
-        .antenna-left { left: 15px; transform: rotate(-30deg); }
-        .antenna-right { right: 15px; transform: rotate(30deg); }
-        .antenna::after {
-            content: '⭕';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1rem;
-        }
-        .rose-container {
-            position: absolute;
-            bottom: -60px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
-        }
-        .rose {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
-        }
-        .rose.animated {
-            animation: roseGlow 2s ease-in-out infinite;
-        }
-        @keyframes roseGlow {
-            0%, 100% { filter: drop-shadow(0 0 10px #ff7675); }
-            50% { filter: drop-shadow(0 0 20px #e74c3c); }
-        }
-        .rose-center {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #ffd93d;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 5;
-        }
-        .petal {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: #2d3436;
-            border-radius: 50%;
-            transition: all 0.5s ease;
-        }
-        .petal.colored {
-            background: #e74c3c;
-            box-shadow: 0 0 20px #e74c3c;
-        }
-        .petal:nth-child(1) { top: -25px; left: 30px; }
-        .petal:nth-child(2) { top: 10px; left: 70px; }
-        .petal:nth-child(3) { top: 50px; left: 70px; }
-        .petal:nth-child(4) { top: 70px; left: 30px; }
-        .petal:nth-child(5) { top: 70px; left: -10px; }
-        .petal:nth-child(6) { top: 50px; left: -25px; }
-        .petal:nth-child(7) { top: 10px; left: -25px; }
-        .stem {
-            position: absolute;
-            width: 8px;
-            height: 100px;
-            background: #2d3436;
-            bottom: -100px;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: all 0.5s;
-        }
-        .stem.green { background: linear-gradient(180deg, #27ae60, #229954); }
-        .character {
-            position: absolute;
-            font-size: 4rem;
-            z-index: 50;
-        }
-        .painter {
-            bottom: 150px;
-            left: 100px;
-            animation: walk 4s ease-in-out infinite;
-        }
-        @keyframes walk {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(50px); }
-        }
-        .bee {
-            top: 120px;
-            right: 100px;
-            display: none;
-            animation: chase 2s ease-in-out;
-        }
-        .bee.active { display: block; }
-        @keyframes chase {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(-150px, 50px); }
-            100% { transform: translate(0, 0); }
-        }
-        .words-panel {
-            position: absolute;
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.95);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-height: 500px;
-            overflow-y: auto;
-        }
-        .words-panel h3 {
-            margin-bottom: 15px;
-            color: #6C5CE7;
-            font-size: 1.1rem;
-        }
-        .word-item {
-            padding: 12px;
-            margin: 8px 0;
-            background: white;
-            border: 2px solid #dee2e6;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        .word-item:hover {
-            transform: scale(1.05);
-            border-color: #6C5CE7;
-        }
-        .word-item.correct {
-            background: #d4edda;
-            border-color: #28a745;
-            animation: correct 0.5s ease;
-        }
-        @keyframes correct {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-        .word-item.wrong {
-            animation: wrong 0.5s ease;
-        }
-        @keyframes wrong {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-        .bottom-panel {
-            height: 120px;
-            background: rgba(255,255,255,0.95);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
-        }
-        .watering-can {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .watering-can:hover {
-            transform: scale(1.1);
-        }
-        .can-body {
-            width: 80px;
-            height: 60px;
-            border-radius: 15px;
-            border: 4px solid #2d3436;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-        }
-        .can-red { background: linear-gradient(135deg, #ff7675, #e74c3c); }
-        .can-blue { background: linear-gradient(135deg, #74b9ff, #3498db); }
-        .can-green { background: linear-gradient(135deg, #55efc4, #00b894); }
-        .can-spout {
-            width: 30px;
-            height: 10px;
-            background: #2d3436;
-            border-radius: 0 8px 8px 0;
-            position: absolute;
-            right: -5px;
-            top: 25px;
-        }
-        .can-handle {
-            width: 40px;
-            height: 50px;
-            border: 4px solid #2d3436;
-            border-radius: 50%;
-            border-left: none;
-            position: absolute;
-            left: -15px;
-            top: 5px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            max-width: 500px;
-        }
-        .modal-icon { font-size: 6rem; margin-bottom: 20px; }
-        .modal-title { font-size: 2.5rem; color: #6C5CE7; margin-bottom: 15px; }
-        .modal-text { font-size: 1.3rem; color: #636e72; margin-bottom: 25px; }
-        .modal-btn {
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            background: linear-gradient(135deg, #6C5CE7, #5848c2);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-<div class="game-screen">
-    <div class="top-bar">
-        <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
-            <div class="water-drops" id="waterDrops"></div>
-        </div>
-        <div class="timer" id="timer">${gameConfig.settings.timer}</div>
-    </div>
-    
-    <div class="game-area">
-        <div class="butterfly-container">
-            <div class="butterfly" id="butterfly">
-                <div class="butterfly-head">
-                    <div class="antenna antenna-left"></div>
-                    <div class="antenna antenna-right"></div>
-                </div>
-                <div class="butterfly-body"></div>
-                <div class="wing wing-left" id="wingLeft"></div>
-                <div class="wing wing-right" id="wingRight"></div>
-            </div>
-            <div class="rose-container">
-                <div class="rose" id="rose">
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="petal"></div>
-                    <div class="rose-center"></div>
-                </div>
-                <div class="stem" id="stem"></div>
-            </div>
-        </div>
-        
-        <div class="character painter">${heroDisplay}</div>
-        <div class="character bee" id="bee">${enemyDisplay}</div>
-        
-        <div class="words-panel">
-            <h3>${t.selectWord}</h3>
-            <div id="wordsList"></div>
-        </div>
-    </div>
-    
-    <div class="bottom-panel">
-        <div class="watering-can">
-            <div class="can-body can-red">die</div>
-            <div class="can-spout"></div>
-            <div class="can-handle"></div>
-        </div>
-        <div class="watering-can">
-            <div class="can-body can-blue">der</div>
-            <div class="can-spout"></div>
-            <div class="can-handle"></div>
-        </div>
-        <div class="watering-can">
-            <div class="can-body can-green">das</div>
-            <div class="can-spout"></div>
-            <div class="can-handle"></div>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="winModal">
-    <div class="modal-content">
-        <div class="modal-icon">${rewardDisplay}</div>
-        <div class="modal-title">${t.winTitle}</div>
-        <div class="modal-text">${gameConfig.settings.winText}</div>
-        <button class="modal-btn" onclick="location.reload()">${t.tryAgain}</button>
-    </div>
-</div>
-
-<script>
-const wordsData = ${JSON.stringify(wordsData)};
-const colors = { die: '#ff7675', der: '#74b9ff', das: '#55efc4' };
-let currentArticle = null;
-let correctCount = 0;
-let timer = ${gameConfig.settings.timer};
-let timerInterval = null;
-let petalIndex = 0;
-
-function init() {
-    for(let i=0; i<6; i++) {
-        document.getElementById('wingLeft').innerHTML += '<div class="wing-segment"></div>';
-        document.getElementById('wingRight').innerHTML += '<div class="wing-segment"></div>';
-    }
-    startRound();
-}
-
-function startRound() {
-    const articles = ['die', 'der', 'das'];
-    currentArticle = articles[Math.floor(Math.random() * articles.length)];
-    highlightCan(currentArticle);
-    generateWords();
-    startTimer();
-}
-
-function highlightCan(article) {
-    document.querySelectorAll('.watering-can').forEach(can => can.style.boxShadow = '');
-    const index = article === 'die' ? 0 : article === 'der' ? 1 : 2;
-    document.querySelectorAll('.watering-can')[index].style.boxShadow = '0 0 30px ' + colors[article];
-}
-
-function generateWords() {
-    const list = document.getElementById('wordsList');
-    list.innerHTML = '';
-    const correct = [...wordsData[currentArticle]].sort(() => Math.random() - 0.5).slice(0, 2);
-    const others = Object.keys(wordsData).filter(a => a !== currentArticle);
-    const wrong = wordsData[others[Math.floor(Math.random() * others.length)]][0];
-    const words = [...correct, wrong].sort(() => Math.random() - 0.5);
-    
-    words.forEach(word => {
-        const div = document.createElement('div');
-        div.className = 'word-item';
-        div.textContent = word;
-        div.onclick = () => checkWord(word, div);
-        list.appendChild(div);
-    });
-}
-
-function checkWord(word, el) {
+// Таймер и жизни
+function startTimer(){
+    timeLeft = 20;
+    document.getElementById("timer").innerText = "⏱ "+timeLeft;
     clearInterval(timerInterval);
-    const isCorrect = wordsData[currentArticle].includes(word);
-    
-    if (isCorrect) {
-        el.classList.add('correct');
-        const segments = document.querySelectorAll('.wing-segment');
-        const empty = Array.from(segments).find(s => !s.classList.contains('colored'));
-        if (empty) {
-            empty.textContent = word;
-            empty.style.backgroundColor = colors[currentArticle];
-            empty.classList.add('colored');
-        }
-        const petals = document.querySelectorAll('.petal');
-        if (petalIndex < petals.length) {
-            petals[petalIndex].classList.add('colored');
-            petalIndex++;
-            if (petalIndex >= petals.length) {
-                document.getElementById('stem').classList.add('green');
-                document.getElementById('rose').classList.add('animated');
-            }
-        }
-        const drops = document.getElementById('waterDrops');
-        const drop = document.createElement('span');
-        drop.className = 'water-drop';
-        drop.textContent = '💧';
-        drops.appendChild(drop);
-        document.getElementById('progressBar').style.width = ((++correctCount) / 12 * 100) + '%';
-        
-        setTimeout(() => {
-            if (correctCount >= 12) {
-                document.getElementById('butterfly').classList.add('animated');
-                setTimeout(() => {
-                    document.getElementById('winModal').classList.add('active');
-                }, 2000);
-            } else {
-                startRound();
-            }
-        }, 1500);
-    } else {
-        el.classList.add('wrong');
-        const bee = document.getElementById('bee');
-        bee.classList.add('active');
-        setTimeout(() => {
-            bee.classList.remove('active');
-            startRound();
-        }, 2000);
-    }
-}
-
-function startTimer() {
-    timer = ${gameConfig.settings.timer};
-    document.getElementById('timer').textContent = timer;
-    document.getElementById('timer').classList.remove('warning');
-    timerInterval = setInterval(() => {
-        timer--;
-        document.getElementById('timer').textContent = timer;
-        if (timer <= 5) document.getElementById('timer').classList.add('warning');
-        if (timer <= 0) {
-            clearInterval(timerInterval);
-            document.getElementById('bee').classList.add('active');
-            setTimeout(() => {
-                document.getElementById('bee').classList.remove('active');
-                startRound();
-            }, 2000);
-        }
-    }, 1000);
-}
-
-init();
-</script>
-</body>
-</html>`;
-}
-
-// ПОКАЗАТЬ ПРЕДПРОСМОТР
-function showPreview() {
-    console.log('Показ предпросмотра...');
-    collectAllData();
-    
-    const gameHTML = generateGameHTML();
-    const previewArea = document.getElementById('previewArea');
-    
-    // Создаём iframe с игрой
-    previewArea.innerHTML = '<iframe class="preview-iframe" srcdoc="' + gameHTML.replace(/"/g, '&quot;') + '"></iframe>';
-    
-    console.log('Предпросмотр загружен');
-}
-
-// ГЕНЕРАЦИЯ КОДА IFRAME
-function generateIframeCode() {
-    console.log('Генерация iframe кода...');
-    collectAllData();
-    
-    const gameHTML = generateGameHTML();
-    
-    // Создаём iframe код
-    const iframeCode = '<iframe width="800" height="600" style="border:none; border-radius:20px;" srcdoc="' + 
-                      gameHTML.replace(/"/g, '&quot;') + 
-                      '"></iframe>';
-    
-    // Показываем в модальном окне
-    document.getElementById('iframeCodeDisplay').textContent = iframeCode;
-    document.getElementById('codeModal').classList.add('active');
-    
-    console.log('Код iframe сгенерирован и показан');
-}
-
-// КОПИРОВАНИЕ КОДА
-function copyIframeCode() {
-    const code = document.getElementById('iframeCodeDisplay').textContent;
-    const copyBtn = document.getElementById('copyBtn');
-    
-    navigator.clipboard.writeText(code).then(() => {
-        copyBtn.textContent = '✅ Скопировано!';
-        copyBtn.classList.add('copied');
-        
-        setTimeout(() => {
-            copyBtn.textContent = '📋 Копировать';
-            copyBtn.classList.remove('copied');
-        }, 3000);
-        
-        console.log('Код скопирован в буфер обмена');
-    }).catch(err => {
-        console.error('Ошибка копирования:', err);
-        alert('Не удалось скопировать. Выделите код и скопируйте вручную (Ctrl+C)');
-    });
-}
-
-// ЗАКРЫТЬ МОДАЛЬНОЕ ОКНО
-function closeCodeModal() {
-    document.getElementById('codeModal').classList.remove('active');
-}
-
-// Закрытие модального окна по клику вне его
-document.getElementById('codeModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeCodeModal();
-    }
-});
-
-console.log('Редактор загружен и готов к работе!');
-</script>
-
-</body>
-</html>
+    timerInterval = setInterval(()=>{
+        timeLeft--;
+        document.getElementById("timer").innerText = "⏱ "+timeLeft;
