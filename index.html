@@ -2,79 +2,106 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Simple Editor</title>
+    <title>Deutsch interaktiv | FINAL EDITOR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
-        h1 { color: #6C5CE7; font-size: 20px; margin-bottom: 20px; border-bottom: 2px solid #6C5CE7; padding-bottom: 10px; }
-        label { display: block; margin-top: 15px; font-weight: bold; font-size: 12px; color: #555; }
-        textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        textarea { height: 60px; }
-        .btn { background: #FD79A8; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        #out-area { display: none; margin-top: 20px; }
-        #code { background: #222; color: #0f0; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 11px; word-break: break-all; height: 100px; overflow-y: auto; }
+        :root { --p: #6C5CE7; --a: #FD79A8; --bg: #F4F7FA; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .editor-wrap { max-width: 900px; margin: 0 auto; background: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: var(--p); padding: 25px; color: white; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-weight: 900; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        .content { padding: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full { grid-column: span 2; }
+        label { display: block; font-size: 11px; font-weight: 900; color: var(--p); margin-bottom: 5px; text-transform: uppercase; }
+        input, textarea, select { width: 100%; border: 2px solid #EEE; border-radius: 12px; padding: 12px; font-family: inherit; box-sizing: border-box; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--p); outline: none; }
+        textarea { height: 80px; resize: none; }
+        .btn-gen { background: var(--a); color: white; border: none; width: calc(100% - 60px); margin: 0 30px 30px; padding: 20px; border-radius: 20px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; }
+        .btn-gen:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(253,121,168,0.3); }
+        #modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:999; align-items:center; justify-content:center; }
+        .modal-box { background: white; padding: 30px; border-radius: 25px; width: 85%; max-width: 650px; text-align: center; }
+        #code-res { background: #1e272e; color: #0be881; padding: 15px; border-radius: 12px; font-family: monospace; font-size: 11px; height: 150px; overflow: auto; word-break: break-all; margin: 20px 0; text-align: left; border: 2px solid #3d4e5f; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h1>🎨 Deutsch interaktiv: Редактор</h1>
-    
-    <label>Язык интерфейса</label>
-    <select id="lang">
-        <option value="ru">Русский</option><option value="de">Deutsch</option>
-        <option value="en">English</option><option value="es">Español</option>
-        <option value="it">Italiano</option><option value="zh">中文</option>
-    </select>
+<div class="editor-wrap">
+    <div class="header">
+        <div class="logo">🎨 Deutsch interaktiv</div>
+        <select id="lang_ui" style="width:130px; border:none;"><option value="ru">Русский</option><option value="de">Deutsch</option></select>
+    </div>
+    <div class="content">
+        <div class="input-box full"><label>Фон (GitHub URL)</label><input type="text" id="g_bg" value="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg"></div>
+        <div class="input-box"><label>DER (Существительные)</label><textarea id="t_der">Apfel, Hund, Tisch</textarea></div>
+        <div class="input-box"><label>DIE (Существительные)</label><textarea id="t_die">Lampe, Katze, Sonne</textarea></div>
+        <div class="input-box"><label>DAS (Существительные)</label><textarea id="t_das">Haus, Buch, Kind</textarea></div>
+        <div class="input-box"><label>Уровень</label><select id="diff"><option value="5">Лёгкий (5 побед)</option><option value="10">Средний (10 побед)</option></select></div>
+    </div>
+    <button class="btn-gen" onclick="generate()">СГЕНЕРИРОВАТЬ ИГРУ</button>
+</div>
 
-    <label>Слова DER (через запятую)</label>
-    <textarea id="der">Hund, Tisch, Apfel</textarea>
-
-    <label>Слова DIE (через запятую)</label>
-    <textarea id="die">Katze, Lampe, Sonne</textarea>
-
-    <label>Слова DAS (через запятую)</label>
-    <textarea id="das">Haus, Buch, Kind</textarea>
-
-    <button class="btn" onclick="gen()">СГЕНЕРИРОВАТЬ КОД</button>
-
-    <div id="out-area">
-        <label>Скопируйте этот код в Genially:</label>
-        <div id="code"></div>
-        <button class="btn" style="background:#6C5CE7" onclick="copy()">КОПИРОВАТЬ</button>
+<div id="modal">
+    <div class="modal-box">
+        <h2 style="color:var(--p); margin:0;">КОД ДЛЯ GENIALLY</h2>
+        <div id="code-res"></div>
+        <button class="btn-gen" style="margin:0" onclick="copy()">СКОПИРОВАТЬ</button>
+        <p onclick="document.getElementById('modal').style.display='none'" style="cursor:pointer; color:gray; font-size:12px; margin-top:15px;">Вернуться в редактор</p>
     </div>
 </div>
 
 <script>
-    function gen() {
-        const der = document.getElementById('der').value;
-        const die = document.getElementById('die').value;
-        const das = document.getElementById('das').value;
+    function generate() {
+        const bg = document.getElementById('g_bg').value;
+        const winLimit = document.getElementById('diff').value;
+        
+        // Очистка слов от лишних пробелов и пустых строк
+        const getWords = (id) => document.getElementById(id).value.split(',').map(w => w.trim()).filter(w => w !== "");
+        
+        const der = getWords('t_der');
+        const die = getWords('t_die');
+        const das = getWords('t_das');
 
-        // Сама игра (максимально легкая)
-        const game = `<!DOCTYPE html><html><body style="margin:0;overflow:hidden;background:url('https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg') center/cover;height:100vh;font-family:sans-serif;text-align:center;">
-            <div id="w" style="display:inline-block;margin-top:40px;background:white;padding:15px 40px;border-radius:20px;font-size:30px;font-weight:900;border:4px solid #6C5CE7;">START</div>
-            <img id="r" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Rose_Path.png" style="display:block;margin:40px auto;width:300px;filter:grayscale(1);">
-            <div style="position:absolute;bottom:50px;width:100%;display:flex;justify-content:center;gap:20px;">
-                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(180deg)" onclick="ck('der')">
-                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(300deg)" onclick="ck('die')">
-                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(100deg)" onclick="ck('das')">
+        const gameHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+            body { margin:0; overflow:hidden; font-family:sans-serif; background:url('\${bg}') center/cover; height:100vh; text-align:center; }
+            #w { display:inline-block; margin-top:40px; background:white; padding:15px 40px; border-radius:20px; font-size:32px; font-weight:900; border:4px solid #6C5CE7; box-shadow:0 10px 20px rgba(0,0,0,0.2); }
+            #rose { display:block; margin:40px auto; width:350px; filter:grayscale(1); transition:1s; }
+            .cans { position:absolute; bottom:40px; width:100%; display:flex; justify-content:center; gap:30px; }
+            .can { width:90px; cursor:pointer; transition:0.2s; }
+            .can:active { transform:scale(0.8); }
+        </style></head><body>
+            <div id="w">START</div>
+            <img id="rose" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Rose_Path.png">
+            <div class="cans">
+                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(180deg)" onclick="check('der')">
+                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(300deg)" onclick="check('die')">
+                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(100deg)" onclick="check('das')">
             </div>
             <script>
-                const data = { der:[\${der.split(',').map(s=>"'"+s.trim()+"'").join(',')}], die:[\${die.split(',').map(s=>"'"+s.trim()+"'").join(',')}], das:[\${das.split(',').map(s=>"'"+s.trim()+"'").join(',')] };
-                let cur='', sc=0;
-                function n() { const k=Object.keys(data); cur=k[Math.floor(Math.random()*k.length)]; document.getElementById('w').innerText=data[cur][Math.floor(Math.random()*data[cur].length)]; }
-                function ck(v) { if(v===cur){ sc++; document.getElementById('r').style.filter="grayscale("+(1-sc/5)+")"; if(sc>=5){alert('Sensationell!');location.reload();}else n(); } else { alert('Попробуй другую лейку!'); } }
-                n();
+                const data = { der: [\${der.map(w => "'"+w+"'").join(',')}], die: [\${die.map(w => "'"+w+"'").join(',')}], das: [\${das.map(w => "'"+w+"'").join(',')] };
+                let cur = '', score = 0, limit = \${winLimit};
+                function next() {
+                    const keys = Object.keys(data);
+                    cur = keys[Math.floor(Math.random()*keys.length)];
+                    const list = data[cur];
+                    document.getElementById('w').innerText = list[Math.floor(Math.random()*list.length)];
+                }
+                window.check = function(v) {
+                    if(v === cur) {
+                        score++;
+                        document.getElementById('rose').style.filter = "grayscale(" + (1 - score/limit) + ")";
+                        if(score >= limit) { alert('Sensationell! 🎨'); location.reload(); } else next();
+                    } else { alert('Попробуйте другой артикль!'); }
+                };
+                next();
             <\/script></body></html>`;
 
-        const iframe = "<iframe srcdoc='" + game.replace(/'/g, "&#39;") + "' width='100%' height='600' frameborder='0'></iframe>";
-        document.getElementById('code').innerText = iframe;
-        document.getElementById('out-area').style.display = 'block';
+        const iframe = "<iframe srcdoc='" + gameHtml.replace(/'/g, "&#39;") + "' width='100%' height='600' frameborder='0'></iframe>";
+        document.getElementById('code-res').innerText = iframe;
+        document.getElementById('modal').style.display = 'flex';
     }
 
     function copy() {
-        navigator.clipboard.writeText(document.getElementById('code').innerText);
+        navigator.clipboard.writeText(document.getElementById('code-res').innerText);
         alert("Код скопирован!");
     }
 </script>
