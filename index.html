@@ -2,192 +2,184 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Конструктор Игр 2026</title>
+    <title>Deutsch interaktiv | Genially Code Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6C5CE7; --a: #FD79A8; --ok: #00B894; --bg: #F9FAFB; --dark: #2D3436; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; color: var(--dark); }
-
-        /* HEADER */
-        .top-bar { background: white; padding: 20px 50px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #eee; position: sticky; top: 0; z-index: 100; }
-        .logo-area { display: flex; align-items: center; gap: 15px; }
-        .logo-text h1 { margin: 0; font-size: 1.2rem; color: var(--p); font-weight: 900; }
-
-        /* ЦЕНТРАЛЬНЫЙ КОНТЕЙНЕР */
-        .container { max-width: 900px; margin: 40px auto; background: white; border-radius: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.05); overflow: hidden; border: 1px solid #eee; }
+        :root { --p: #6C5CE7; --a: #FD79A8; --dark: #2D3436; --bg: #f8f9fa; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 0; }
         
-        /* БЛОКИ НАСТРОЕК */
-        .section { padding: 40px; border-bottom: 1px solid #f0f0f0; }
-        .section:nth-child(even) { background: #fafaff; }
-        .section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 25px; }
-        .section-title span { background: var(--p); color: white; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; font-size: 0.8rem; }
-        .section-title h2 { margin: 0; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 1px; }
+        .admin-panel { max-width: 1000px; margin: 30px auto; background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #eee; }
+        .p-40 { padding: 40px; }
+        
+        /* Стилизация анкеты */
+        .step { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #eee; }
+        .step-title { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .step-num { background: var(--p); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; }
+        
+        h2 { margin: 0; font-size: 1.2rem; text-transform: uppercase; color: var(--dark); }
+        label { display: block; font-size: 0.8rem; font-weight: 800; color: #777; margin-bottom: 10px; text-transform: uppercase; }
+        
+        input, select, textarea { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #e0e0e0; font-family: inherit; font-size: 1rem; margin-bottom: 20px; box-sizing: border-box; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
 
-        /* ПОЛЯ ВВОДА */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full { grid-column: span 2; }
-        label { display: block; font-size: 0.75rem; font-weight: 800; color: #888; margin-bottom: 8px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; padding: 15px; border-radius: 12px; border: 2px solid #e0e0e0; font-family: inherit; font-size: 1rem; transition: 0.3s; box-sizing: border-box; }
-        input:focus { border-color: var(--p); outline: none; background: white; }
-        textarea { resize: vertical; min-height: 80px; }
+        /* Кнопки */
+        .gen-box { background: var(--dark); padding: 40px; text-align: center; color: white; }
+        .btn-gen { background: var(--a); color: white; border: none; padding: 20px 50px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
+        .btn-gen:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(253, 121, 168, 0.4); }
 
-        /* КАТЕГОРИИ */
-        .cat-box { background: white; border: 2px solid #eee; padding: 20px; border-radius: 20px; margin-bottom: 15px; }
-        .cat-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .color-picker { width: 50px; height: 50px; border: none; border-radius: 50%; cursor: pointer; padding: 0; overflow: hidden; }
-
-        /* ФИНАЛЬНАЯ ПАНЕЛЬ */
-        .action-bar { padding: 40px; text-align: center; background: #fff; }
-        .btn { padding: 20px 40px; border: none; border-radius: 20px; font-weight: 900; font-size: 1rem; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
-        .btn-main { background: var(--p); color: white; box-shadow: 0 10px 30px rgba(108, 92, 231, 0.4); }
-        .btn-main:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(108, 92, 231, 0.6); }
-
-        /* МОДАЛЬНОЕ ОКНО IFRAME */
-        #iframe-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 52, 54, 0.95); z-index: 1000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 800px; padding: 50px; border-radius: 40px; position: relative; }
-        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; cursor: pointer; color: #888; }
-        #code-area { background: #2d3436; color: #fab1a0; padding: 25px; border-radius: 15px; font-family: monospace; font-size: 1.1rem; word-break: break-all; margin: 20px 0; border: 1px solid #444; }
-
-        .v-selector { display: flex; gap: 10px; margin-top: 10px; }
-        .v-item { cursor: pointer; font-size: 1.5rem; padding: 10px; border: 2px solid #eee; border-radius: 12px; transition: 0.2s; }
-        .v-item.active { border-color: var(--a); background: #fff0f5; transform: scale(1.1); }
+        /* Окно с кодом */
+        #output-zone { display: none; margin-top: 30px; }
+        #code-res { background: #1e1e1e; color: #7cfc00; padding: 25px; border-radius: 15px; font-family: monospace; white-space: pre-wrap; word-break: break-all; font-size: 0.9rem; border: 2px solid #333; height: 250px; overflow-y: auto; }
+        
+        .cat-card { background: #fdfdfd; border: 2px solid #f0f0f0; padding: 20px; border-radius: 20px; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="logo-area">
-        <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" width="60">
-        <div class="logo-text">
-            <h1>DEUTSCH INTERAKTIV</h1>
-            <small style="color:#aaa; font-weight:700;">КОНСТРУКТОР ИГР 2026</small>
-        </div>
-    </div>
-    <div class="header-actions">
-        <button class="btn btn-main" style="padding: 12px 25px; font-size: 0.8rem;" onclick="generateIframe()">Получить код</button>
-    </div>
-</div>
-
-<div class="container">
-    <div class="section">
-        <div class="section-title"><span>1</span><h2>Основные настройки</h2></div>
-        <div class="grid">
-            <div>
-                <label>Язык интерфейса игры</label>
-                <select id="game-lang">
-                    <option value="ru">Русский</option>
-                    <option value="de">Deutsch</option>
-                    <option value="en">English</option>
-                    <option value="es">Español</option>
-                    <option value="it">Italiano</option>
-                    <option value="zh">Chinese</option>
-                </select>
-            </div>
-            <div>
-                <label>Сложность и Объект</label>
-                <select id="game-lvl">
-                    <option value="butterfly">🦋 Лёгкий (Бабочка)</option>
-                    <option value="dahlia">🌸 Средний (Георгина)</option>
-                    <option value="house">🏠 Сложный (Дом)</option>
-                </select>
-            </div>
+<div class="admin-panel">
+    <div style="background: var(--p); padding: 30px; color: white; display: flex; align-items: center; gap: 20px;">
+        <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" width="70">
+        <div>
+            <h1 style="margin:0; font-size:1.5rem;">GENIALLY CODE BUILDER</h1>
+            <p style="margin:0; opacity: 0.8;">Создайте игру и получите код для вставки</p>
         </div>
     </div>
 
-    <div class="section">
-        <div class="section-title"><span>2</span><h2>Настройка артиклей и слов</h2></div>
-        <div id="cat-list">
-            </div>
-    </div>
-
-    <div class="section">
-        <div class="section-title"><span>3</span><h2>Оформление</h2></div>
-        <div class="grid">
-            <div>
-                <label>Фоновая картинка (Заставка)</label>
-                <input type="file" accept="image/*" onchange="encodeImg(this, 'bg')">
-            </div>
-            <div>
-                <label>Главный герой (Художник)</label>
-                <input type="file" accept="image/*" onchange="encodeImg(this, 'hero')">
-            </div>
-            <div class="full">
-                <label>Текст поздравления в финале</label>
-                <input type="text" id="win-text" placeholder="GUT GEMACHT! Ты настоящий мастер!">
+    <div class="p-40">
+        <div class="step">
+            <div class="step-title"><div class="step-num">1</div><h2>Настройки уровня</h2></div>
+            <div class="grid">
+                <div>
+                    <label>Сложность</label>
+                    <select id="lvl">
+                        <option value="easy">🦋 Бабочка (Легкий)</option>
+                        <option value="medium">🌸 Георгина (Средний)</option>
+                        <option value="hard">🏠 Дом (Сложный)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Язык</label>
+                    <select id="lang">
+                        <option value="ru">Русский</option>
+                        <option value="de">Deutsch</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Жизни</label>
+                    <input type="number" id="lives" value="3">
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="action-bar">
-        <button class="btn btn-main" onclick="exportHTML()">📦 СКАЧАТЬ ГОТОВУЮ ИГРУ (.HTML)</button>
-        <p style="font-size: 0.8rem; color: #aaa; margin-top: 15px;">После скачивания файл можно открыть в любом браузере или загрузить на сайт.</p>
-    </div>
-</div>
+        <div class="step">
+            <div class="step-title"><div class="step-num">2</div><h2>Контент (Артикли и слова)</h2></div>
+            <div class="grid" id="categories">
+                <div class="cat-card">
+                    <label>Категория 1</label>
+                    <input type="text" id="c1-n" value="Der">
+                    <input type="color" id="c1-c" value="#74b9ff">
+                    <textarea id="c1-w" placeholder="Слова через запятую...">Apfel, Tisch, Tag</textarea>
+                </div>
+                <div class="cat-card">
+                    <label>Категория 2</label>
+                    <input type="text" id="c2-n" value="Die">
+                    <input type="color" id="c2-c" value="#ff7675">
+                    <textarea id="c2-w" placeholder="Слова через запятую...">Lampe, Nacht, Frau</textarea>
+                </div>
+                <div class="cat-card">
+                    <label>Категория 3</label>
+                    <input type="text" id="c3-n" value="Das">
+                    <input type="color" id="c3-c" value="#55efc4">
+                    <textarea id="c3-w" placeholder="Слова через запятую...">Haus, Kind, Buch</textarea>
+                </div>
+            </div>
+        </div>
 
-<div id="iframe-modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="document.getElementById('iframe-modal').style.display='none'">&times;</span>
-        <h2 style="color:var(--p); margin-top:0;">Ваш Iframe Код</h2>
-        <p>Скопируйте этот код и вставьте его в HTML-блок на вашем сайте (Tilda, WordPress и др.):</p>
-        <div id="code-area"></div>
-        <button class="btn btn-main" style="width:100%;" onclick="copyCode()">Копировать код</button>
+        <div class="gen-box">
+            <button class="btn-gen" onclick="buildGameCode()">СГЕНЕРИРОВАТЬ КОД ДЛЯ GENIALLY</button>
+            
+            <div id="output-zone">
+                <p style="color: #a29bfe; font-weight: 900; margin-top: 20px;">↓ СКОПИРУЙТЕ ЭТОТ КОД ПОЛНОСТЬЮ ↓</p>
+                <div id="code-res"></div>
+                <button class="btn-gen" style="background:var(--ok); margin-top:20px;" onclick="copyCode()">КОПИРОВАТЬ В БУФЕР</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    const CATS = [
-        { lab: 'Der', color: '#74b9ff', words: 'Tisch, Tag, Apfel' },
-        { lab: 'Die', color: '#ff7675', words: 'Lampe, Nacht, Frau' },
-        { lab: 'Das', color: '#55efc4', words: 'Haus, Kind, Buch' }
-    ];
+    function buildGameCode() {
+        // Собираем данные из полей
+        const data = {
+            lvl: document.getElementById('lvl').value,
+            lives: document.getElementById('lives').value,
+            cats: [
+                {n: document.getElementById('c1-n').value, c: document.getElementById('c1-c').value, w: document.getElementById('c1-w').value},
+                {n: document.getElementById('c2-n').value, c: document.getElementById('c2-c').value, w: document.getElementById('c2-w').value},
+                {n: document.getElementById('c3-n').value, c: document.getElementById('c3-c').value, w: document.getElementById('c3-w').value}
+            ]
+        };
 
-    function init() {
-        const root = document.getElementById('cat-list');
-        CATS.forEach((cat, i) => {
-            root.innerHTML += `
-                <div class="cat-box">
-                    <div class="cat-head">
-                        <input type="text" value="${cat.lab}" style="width:120px; font-weight:900; border:none; border-bottom:3px solid ${cat.color};">
-                        <input type="color" value="${cat.color}" class="color-picker">
-                    </div>
-                    <label>Список слов (через запятую)</label>
-                    <textarea>${cat.words}</textarea>
-                    <label>Визуальный эффект при закрашивании</label>
-                    <div class="v-selector">
-                        <div class="v-item active">🚫</div>
-                        <div class="v-item">🔥</div>
-                        <div class="v-item">✨</div>
-                        <div class="v-item">🌈</div>
-                    </div>
-                </div>
-            `;
-        });
-    }
+        // Формируем "Чистый код игры" (движок + данные)
+        const gameHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { margin:0; overflow:hidden; font-family: sans-serif; background: url('https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg') center/cover; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+        #word { background:white; padding:20px 50px; border-radius:50px; border:5px solid ${data.cats[0].c}; font-size:30px; font-weight:900; margin-top:200px; }
+        #artist { position:absolute; bottom:20px; left:20px; width:150px; transition: 0.5s; }
+        #bee { position:absolute; top:20%; left:-100px; width:80px; }
+        .btns { position:absolute; bottom:30px; right:30px; display:flex; gap:10px; }
+        .btn { padding:15px 30px; border:none; border-radius:10px; color:white; font-weight:bold; cursor:pointer; }
+    </style>
+</head>
+<body>
+    <div id="word">ЗАГРУЗКА...</div>
+    <img id="artist" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png">
+    <img id="bee" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%97%D0%BB%D0%B0%D1%8F%20%D0%BF%D1%87%D0%B5%D0%BB%D0%B0.png">
+    
+    <div class="btns">
+        <button class="btn" style="background:${data.cats[0].c}" onclick="check(0)">${data.cats[0].n}</button>
+        <button class="btn" style="background:${data.cats[1].c}" onclick="check(1)">${data.cats[1].n}</button>
+        <button class="btn" style="background:${data.cats[2].c}" onclick="check(2)">${data.cats[2].n}</button>
+    </div>
 
-    function generateIframe() {
-        const modal = document.getElementById('iframe-modal');
-        const code = `<iframe src="https://your-domain.com/game.html" width="1000" height="600" frameborder="0" allowfullscreen></iframe>`;
-        document.getElementById('code-area').innerText = code;
-        modal.style.display = 'flex';
+    <script>
+        const words = [
+            {t: '${data.cats[0].w.split(',')[0].trim()}', a: 0},
+            {t: '${data.cats[1].w.split(',')[0].trim()}', a: 1}
+        ];
+        let current = 0;
+        document.getElementById('word').innerText = words[current].t;
+
+        function check(idx) {
+            if(idx === words[current].a) {
+                alert('Правильно!');
+            } else {
+                const bee = document.getElementById('bee');
+                bee.animate([{left: '-100px'}, {left: '110%'}], {duration: 2000});
+                document.getElementById('artist').style.transform = 'translateX(100px)';
+                setTimeout(()=>document.getElementById('artist').style.transform='translateX(0)', 2000);
+            }
+        }
+    <\/script>
+</body>
+</html>`;
+
+        // Выводим код для Iframe
+        const finalCode = `<iframe srcdoc='${gameHtml.replace(/'/g, "&#39;")}' width="100%" height="600" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+        
+        document.getElementById('code-res').innerText = finalCode;
+        document.getElementById('output-zone').style.display = 'block';
     }
 
     function copyCode() {
-        const text = document.getElementById('code-area').innerText;
+        const text = document.getElementById('code-res').innerText;
         navigator.clipboard.writeText(text);
-        alert('Код скопирован!');
+        alert('Код для Genially скопирован!');
     }
-
-    function exportHTML() {
-        // Логика создания чистого файла игры на основе данных анкеты
-        alert('Собираю игру... Файл скачается автоматически.');
-        const blob = new Blob(["<html>...Содержимое игры на основе ваших настроек...</html>"], {type: 'text/html'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = "Deutsch_Interaktiv_Game.html";
-        a.click();
-    }
-
-    init();
 </script>
+
 </body>
 </html>
