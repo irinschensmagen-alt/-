@@ -1,215 +1,72 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Grand Masterpiece Editor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
-    <style>
-        :root { --p: #6C5CE7; --a: #FD79A8; --ok: #00B894; --err: #e74c3c; --bg: #f0f2f5; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #2d3436; }
-        
-        /* Основной контейнер */
-        .wrapper { max-width: 1600px; margin: 0 auto; background: white; border-radius: 40px; border: 6px solid var(--p); padding: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.15); }
+<style>
+    /* Анимация Злой Пчелы */
+    .angry-bee {
+        position: fixed;
+        width: 80px;
+        z-index: 9999;
+        display: none;
+        pointer-events: none;
+        filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+    }
 
-        /* Шапка */
-        .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 4px solid #eee; padding-bottom: 20px; margin-bottom: 25px; }
-        .logo-area { display: flex; align-items: center; gap: 20px; }
-        .logo-img { width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--a); object-fit: cover; }
-        .header-titles h2 { margin: 0; color: var(--p); font-size: 2rem; }
-        .header-titles span { color: var(--a); font-weight: 900; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem; }
+    @keyframes flyAcross {
+        0% { left: -100px; top: 50%; transform: scaleX(1); }
+        50% { left: 50%; top: 30%; transform: scaleX(1) rotate(10deg); }
+        100% { left: 110%; top: 60%; transform: scaleX(1); }
+    }
 
-        /* Сетка редактора */
-        .editor-grid { display: grid; grid-template-columns: 1fr 1.2fr 350px; gap: 25px; }
-        .panel { background: #f8f9ff; border-radius: 25px; padding: 25px; border: 2px solid #e1e2ef; }
-        .panel-h { font-weight: 900; color: var(--p); border-left: 6px solid var(--a); padding-left: 15px; margin-bottom: 20px; text-transform: uppercase; }
+    .bee-flying {
+        display: block !important;
+        animation: flyAcross 1.5s linear forwards;
+    }
+</style>
 
-        /* Поля ввода */
-        input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #ddd; margin-bottom: 15px; font-family: inherit; box-sizing: border-box; }
-        label { font-size: 0.75rem; font-weight: 900; color: #636e72; text-transform: uppercase; display: block; margin-bottom: 5px; }
-
-        /* Предпросмотр картинок */
-        .upload-zone { background: white; border: 2px dashed #ccc; border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 20px; }
-        .preview-flex { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; justify-content: center; }
-        .img-item { width: 80px; height: 80px; border-radius: 15px; border: 3px solid #eee; object-fit: contain; cursor: pointer; transition: 0.3s; }
-        .img-item.active { border-color: var(--a); transform: scale(1.1); box-shadow: 0 5px 15px rgba(253,121,168,0.3); }
-
-        /* Кнопки */
-        .btn { width: 100%; padding: 18px; border: none; border-radius: 18px; font-weight: 900; cursor: pointer; color: white; text-transform: uppercase; transition: 0.2s; margin-top: 10px; }
-        .btn-save { background: var(--ok); box-shadow: 0 5px 0 #008a6e; }
-        .btn-export { background: var(--p); box-shadow: 0 5px 0 #4834d4; }
-        .btn:active { transform: translateY(4px); box-shadow: none; }
-
-        /* Игровые объекты (SVG) */
-        .game-display { position: relative; height: 300px; background: #fff; border-radius: 20px; border: 2px solid #eee; margin-top: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        svg { max-width: 100%; max-height: 100%; display: none; }
-
-        /* Скрываем редактор при экспорте */
-        @media print { .editor-grid, .header-controls { display: none !important; } }
-    </style>
-</head>
-<body>
-
-<div class="wrapper" id="mainWrapper">
-    <div class="header">
-        <div class="logo-area">
-            <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" class="logo-img">
-            <div class="header-titles">
-                <h2>Deutsch interaktiv</h2>
-                <span id="ui-sub">UNIVERSAL GAME EDITOR</span>
-            </div>
-        </div>
-        <div class="header-controls" style="width: 300px;">
-            <label id="lbl-lang">ЯЗЫК ИНТЕРФЕЙСА</label>
-            <select id="uiLang" onchange="translateUI()">
-                <option value="ru">Русский (RU)</option>
-                <option value="de">Deutsch (DE)</option>
-                <option value="en">English (EN)</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="editor-grid" id="editorGrid">
-        <div class="panel">
-            <div class="panel-h" id="h1">1. КАТЕГОРИИ</div>
-            <div id="cat-root"></div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-h" id="h2">2. МИР И ГЕРОИ</div>
-            
-            <label id="lbl-lvl">СЛОЖНОСТЬ (ОБЪЕКТ)</label>
-            <select id="gameLvl" onchange="changeLevel()">
-                <option value="butterfly">🦋 Лёгкий — Бабочка</option>
-                <option value="house">🌸 Средний — Георгина</option>
-                <option value="garden">🏠 Сложный — Дом</option>
-            </select>
-
-            <label id="lbl-bg">ФОН ИГРЫ</label>
-            <div class="upload-zone">
-                <input type="text" placeholder="Ссылка на фон..." id="bg-link" onchange="addImg('bg-link', 'pre-bg')">
-                <div class="preview-flex" id="pre-bg">
-                    <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg" class="img-item active" onclick="setA(this)">
-                </div>
-            </div>
-
-            <label id="lbl-hero">ГЛАВНЫЙ ГЕРОЙ</label>
-            <div class="upload-zone">
-                <input type="text" placeholder="Ссылка на героя..." id="h-link" onchange="addImg('h-link', 'pre-h')">
-                <div class="preview-flex" id="pre-h">
-                    <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png" class="img-item active" onclick="setA(this)">
-                </div>
-            </div>
-
-            <div class="game-display" id="gamePreview">
-                <svg id="svg-butterfly" viewBox="0 0 100 100" style="display:block; width:150px;"><path d="M50 20 C20 0 0 40 50 50 C100 40 80 0 50 20" fill="#eee" stroke="#333"/></svg>
-                <svg id="svg-dahlia" viewBox="0 0 100 100" style="width:150px;"><circle cx="50" cy="50" r="10" fill="#ccc"/><ellipse cx="50" cy="20" rx="10" ry="20" fill="#eee"/></svg>
-                <svg id="svg-house" viewBox="0 0 100 100" style="width:150px;"><rect x="20" y="40" width="60" height="40" fill="#eee"/><polygon points="20,40 80,40 50,10" fill="#ddd"/></svg>
-            </div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-h" id="h3">3. ИНТЕРФЕЙС</div>
-            <label id="lb1">Кнопка "Начать"</label><input type="text" id="i1">
-            <label id="lb2">Кнопка "Заново"</label><input type="text" id="i2">
-            <label id="lw">Текст победы</label><input type="text" id="i3">
-            
-            <button class="btn btn-save" onclick="saveToLocal()">💾 СОХРАНИТЬ ПРЕСЕТ</button>
-            <button class="btn btn-export" onclick="exportGame()">📦 ЭКСПОРТ ИГРЫ</button>
-        </div>
-    </div>
-</div>
+<img id="bee" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%97%D0%BB%D0%B0%D1%8F%20%D0%BF%D1%87%D0%B5%D0%BB%D0%B0.png" class="angry-bee">
 
 <script>
-    const dict = {
-        ru: { h1:"1. КАТЕГОРИИ", h2:"2. МИР И ГЕРОИ", h3:"3. ИНТЕРФЕЙС", sub:"РЕДАКТОР ИГРЫ", v:["НАЧАТЬ","ЗАНОВО","ТЫ ГЕНИЙ!"], cat:"Категория" },
-        de: { h1:"1. KATEGORIEN", h2:"2. WELT & HELDEN", h3:"3. INTERFACE", sub:"SPIEL EDITOR", v:["STARTEN","NEUSTART","GENIAL!"], cat:"Kategorie" },
-        en: { h1:"1. CATEGORIES", h2:"2. WORLD & HEROES", h3:"3. INTERFACE", sub:"GAME EDITOR", v:["START","RESTART","EXCELLENT!"], cat:"Category" }
-    };
-
-    function translateUI() {
-        const l = document.getElementById('uiLang').value;
-        const d = dict[l] || dict.ru;
-        document.getElementById('h1').innerText = d.h1;
-        document.getElementById('h2').innerText = d.h2;
-        document.getElementById('h3').innerText = d.h3;
-        document.getElementById('ui-sub').innerText = d.sub;
-        [1,2,3].forEach(n => document.getElementById('i'+n).value = d.v[n-1]);
-        document.querySelectorAll('.cat-label').forEach((el, i) => el.innerText = d.cat + " " + (i+1));
-    }
-
-    function changeLevel() {
-        const lvl = document.getElementById('gameLvl').value;
-        const svgs = ['svg-butterfly', 'svg-dahlia', 'svg-house'];
-        svgs.forEach(id => document.getElementById(id).style.display = 'none');
-        
-        if(lvl === 'butterfly') document.getElementById('svg-butterfly').style.display = 'block';
-        if(lvl === 'house') document.getElementById('svg-dahlia').style.display = 'block';
-        if(lvl === 'garden') document.getElementById('svg-house').style.display = 'block';
-        saveToLocal();
-    }
-
-    function addImg(inId, contId) {
-        const url = document.getElementById(inId).value;
-        if(url) {
-            const img = document.createElement('img');
-            img.src = url; img.className = 'img-item';
-            img.onclick = function() { setA(this); };
-            document.getElementById(contId).appendChild(img);
-            document.getElementById(inId).value = '';
-        }
-    }
-
-    function setA(el) {
-        el.parentElement.querySelectorAll('img').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        saveToLocal();
-    }
-
-    function saveToLocal() {
-        const data = {
-            lvl: document.getElementById('gameLvl').value,
-            lang: document.getElementById('uiLang').value,
-            words: Array.from(document.querySelectorAll('textarea')).map(t => t.value)
-        };
-        localStorage.setItem('funny_painter_data', JSON.stringify(data));
-    }
-
-    function exportGame() {
-        // Клонируем документ
+// ОБНОВЛЕННАЯ ФУНКЦИЯ ЭКСПОРТА
+function exportGame() {
+    const bee = document.getElementById('bee');
+    
+    // 1. Запускаем пчелу!
+    bee.classList.add('bee-flying');
+    
+    // Ждем, пока пчела пролетит (1.5 сек), прежде чем скачивать
+    setTimeout(() => {
+        // 2. Создаем копию для экспорта
         const clone = document.documentElement.cloneNode(true);
-        // Удаляем редактор из копии для ученика
+        
+        // 3. УДАЛЯЕМ редактор и пчелу из файла ученика
         const grid = clone.querySelector('#editorGrid');
         const controls = clone.querySelector('.header-controls');
+        const beeInClone = clone.querySelector('#bee');
+        
         if(grid) grid.remove();
         if(controls) controls.remove();
+        if(beeInClone) beeInClone.remove(); // Ученик не должен видеть пчелу при старте
         
-        // Добавляем скрипт запуска игры в экспорт
+        // 4. Очищаем стили анимации в клоне, чтобы файл был чистым
+        const wrapper = clone.querySelector('#mainWrapper');
+        if(wrapper) wrapper.style.border = "none"; 
+
+        // 5. Генерация файла
         const blob = new Blob([clone.outerHTML], {type: "text/html"});
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
         a.download = "Funny_Painter_READY.html";
         a.click();
-    }
+        
+        // Убираем пчелу в редакторе после полета
+        bee.classList.remove('bee-flying');
+    }, 1500);
+}
 
-    window.onbeforeunload = function() { return "Данные могут не сохраниться!"; };
-
-    function init() {
-        const root = document.getElementById('cat-root');
-        const defs = [{n:'Der', c:'#74b9ff'}, {n:'Die', c:'#ff7675'}, {n:'Das', c:'#55efc4'}];
-        defs.forEach((d, i) => {
-            root.innerHTML += `
-            <div class="panel" style="margin-bottom:10px; background:white;">
-                <label class="cat-label">Категория ${i+1}</label>
-                <div style="display:flex; gap:10px;">
-                    <input type="text" value="${d.n}" style="flex:1">
-                    <input type="color" value="${d.c}" style="width:50px; padding:2px;">
-                </div>
-                <textarea placeholder="Слова..." oninput="saveToLocal()"></textarea>
-            </div>`;
-        });
-        translateUI();
-    }
-    window.onload = init;
+// ВАЖНО: Не забывайте про автосохранение, оно работает в фоне
+function autoSaveEditor() {
+    const data = {
+        lvl: document.getElementById('gameLvl').value,
+        words: Array.from(document.querySelectorAll('textarea')).map(t => t.value)
+    };
+    localStorage.setItem('funny_painter_save', JSON.stringify(data));
+}
 </script>
-</body>
-</html>
