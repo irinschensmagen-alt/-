@@ -2,182 +2,192 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Genially Code Generator</title>
+    <title>Редактор игры | Deutsch interaktiv</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --p: #6C5CE7; --a: #FD79A8; --dark: #2D3436; --bg: #f8f9fa; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        :root { --p: #6C5CE7; --a: #FD79A8; --dark: #2D3436; }
+        body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .editor-container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 40px; border: 6px solid var(--p); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.1); }
         
-        .admin-panel { max-width: 1000px; margin: 30px auto; background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid #eee; }
-        .p-40 { padding: 40px; }
+        /* ШАПКА */
+        .header { background: var(--p); padding: 30px; color: white; display: flex; align-items: center; justify-content: space-between; }
+        .logo-block { display: flex; align-items: center; gap: 20px; }
         
-        /* Стилизация анкеты */
-        .step { margin-bottom: 40px; padding-bottom: 30px; border-bottom: 1px solid #eee; }
-        .step-title { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .step-num { background: var(--p); color: white; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: 900; }
+        /* БЛОКИ */
+        .content { padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .media-card { background: #f8f9ff; border: 2px solid #e1e2ef; padding: 25px; border-radius: 25px; }
+        h3 { margin-top: 0; color: var(--p); font-size: 1rem; text-transform: uppercase; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         
-        h2 { margin: 0; font-size: 1.2rem; text-transform: uppercase; color: var(--dark); }
-        label { display: block; font-size: 0.8rem; font-weight: 800; color: #777; margin-bottom: 10px; text-transform: uppercase; }
-        
-        input, select, textarea { width: 100%; padding: 15px; border-radius: 15px; border: 2px solid #e0e0e0; font-family: inherit; font-size: 1rem; margin-bottom: 20px; box-sizing: border-box; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+        label { display: block; font-size: 0.75rem; font-weight: 800; color: #666; margin: 15px 0 5px; }
+        input[type="text"], textarea { width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #ddd; font-family: inherit; box-sizing: border-box; }
+        .file-row { display: flex; gap: 10px; align-items: center; }
+        input[type="file"] { font-size: 0.7rem; }
 
-        /* Кнопки */
-        .gen-box { background: var(--dark); padding: 40px; text-align: center; color: white; }
-        .btn-gen { background: var(--a); color: white; border: none; padding: 20px 50px; border-radius: 20px; font-weight: 900; font-size: 1.1rem; cursor: pointer; transition: 0.3s; }
-        .btn-gen:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(253, 121, 168, 0.4); }
+        /* КНОПКА ГЕНЕРАЦИИ */
+        .footer-action { background: var(--dark); padding: 40px; text-align: center; }
+        .btn-build { background: var(--a); color: white; border: none; padding: 25px 60px; border-radius: 20px; font-weight: 900; font-size: 1.2rem; cursor: pointer; transition: 0.3s; }
+        .btn-build:hover { transform: scale(1.05); }
 
-        /* Окно с кодом */
-        #output-zone { display: none; margin-top: 30px; }
-        #code-res { background: #1e1e1e; color: #7cfc00; padding: 25px; border-radius: 15px; font-family: monospace; white-space: pre-wrap; word-break: break-all; font-size: 0.9rem; border: 2px solid #333; height: 250px; overflow-y: auto; }
-        
-        .cat-card { background: #fdfdfd; border: 2px solid #f0f0f0; padding: 20px; border-radius: 20px; }
+        /* ОКНО РЕЗУЛЬТАТА */
+        #result-box { display: none; margin-top: 20px; padding: 20px; background: #1e1e1e; border-radius: 15px; }
+        #code-out { color: #00ff00; font-family: monospace; font-size: 0.8rem; word-break: break-all; white-space: pre-wrap; height: 200px; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-<div class="admin-panel">
-    <div style="background: var(--p); padding: 30px; color: white; display: flex; align-items: center; gap: 20px;">
-        <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" width="70">
-        <div>
-            <h1 style="margin:0; font-size:1.5rem;">GENIALLY CODE BUILDER</h1>
-            <p style="margin:0; opacity: 0.8;">Создайте игру и получите код для вставки</p>
+<div class="editor-container">
+    <div class="header">
+        <div class="logo-block">
+            <img src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/logo.png" width="80">
+            <div>
+                <h1 style="margin:0;">РЕДАКТОР ИГРЫ</h1>
+                <p style="margin:0; opacity:0.8;">Deutsch interaktiv | Лёгкий уровень</p>
+            </div>
         </div>
     </div>
 
-    <div class="p-40">
-        <div class="step">
-            <div class="step-title"><div class="step-num">1</div><h2>Настройки уровня</h2></div>
-            <div class="grid">
-                <div>
-                    <label>Сложность</label>
-                    <select id="lvl">
-                        <option value="easy">🦋 Бабочка (Легкий)</option>
-                        <option value="medium">🌸 Георгина (Средний)</option>
-                        <option value="hard">🏠 Дом (Сложный)</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Язык</label>
-                    <select id="lang">
-                        <option value="ru">Русский</option>
-                        <option value="de">Deutsch</option>
-                    </select>
-                </div>
-                <div>
-                    <label>Жизни</label>
-                    <input type="number" id="lives" value="3">
-                </div>
-            </div>
-        </div>
-
-        <div class="step">
-            <div class="step-title"><div class="step-num">2</div><h2>Контент (Артикли и слова)</h2></div>
-            <div class="grid" id="categories">
-                <div class="cat-card">
-                    <label>Категория 1</label>
-                    <input type="text" id="c1-n" value="Der">
-                    <input type="color" id="c1-c" value="#74b9ff">
-                    <textarea id="c1-w" placeholder="Слова через запятую...">Apfel, Tisch, Tag</textarea>
-                </div>
-                <div class="cat-card">
-                    <label>Категория 2</label>
-                    <input type="text" id="c2-n" value="Die">
-                    <input type="color" id="c2-c" value="#ff7675">
-                    <textarea id="c2-w" placeholder="Слова через запятую...">Lampe, Nacht, Frau</textarea>
-                </div>
-                <div class="cat-card">
-                    <label>Категория 3</label>
-                    <input type="text" id="c3-n" value="Das">
-                    <input type="color" id="c3-c" value="#55efc4">
-                    <textarea id="c3-w" placeholder="Слова через запятую...">Haus, Kind, Buch</textarea>
-                </div>
-            </div>
-        </div>
-
-        <div class="gen-box">
-            <button class="btn-gen" onclick="buildGameCode()">СГЕНЕРИРОВАТЬ КОД ДЛЯ GENIALLY</button>
+    <div class="content">
+        <div class="media-card">
+            <h3>🖼 Графика и Шаблоны</h3>
             
-            <div id="output-zone">
-                <p style="color: #a29bfe; font-weight: 900; margin-top: 20px;">↓ СКОПИРУЙТЕ ЭТОТ КОД ПОЛНОСТЬЮ ↓</p>
-                <div id="code-res"></div>
-                <button class="btn-gen" style="background:var(--ok); margin-top:20px;" onclick="copyCode()">КОПИРОВАТЬ В БУФЕР</button>
+            <label>Шаблон Бабочки (SVG или PNG)</label>
+            <div class="file-row">
+                <input type="text" id="img-butterfly" placeholder="Ссылка на бабочку">
+                <input type="file" onchange="toBase64(this, 'img-butterfly')">
             </div>
+
+            <label>Злая пчела</label>
+            <div class="file-row">
+                <input type="text" id="img-bee" placeholder="Ссылка на пчелу">
+                <input type="file" onchange="toBase64(this, 'img-bee')">
+            </div>
+
+            <label>Весёлый художник</label>
+            <div class="file-row">
+                <input type="text" id="img-hero" placeholder="Ссылка на героя">
+                <input type="file" onchange="toBase64(this, 'img-hero')">
+            </div>
+
+            <label>Фоновая заставка</label>
+            <div class="file-row">
+                <input type="text" id="img-bg" placeholder="Ссылка на фон">
+                <input type="file" onchange="toBase64(this, 'img-bg')">
+            </div>
+        </div>
+
+        <div class="media-card">
+            <h3>🔊 Звуки и Контент</h3>
+            
+            <label>Звук жужжания пчелы (MP3)</label>
+            <div class="file-row">
+                <input type="text" id="snd-bee" placeholder="Ссылка на звук">
+                <input type="file" onchange="toBase64(this, 'snd-bee')">
+            </div>
+
+            <label>Слова для игры (через запятую)</label>
+            <textarea id="words-list" rows="4">der Apfel, die Lampe, das Haus, der Hund</textarea>
+            
+            <label>Текст финала</label>
+            <input type="text" id="text-win" value="GUT GEMACHT! Ты мастер!">
+
+            <label>Язык интерфейса</label>
+            <select id="ui-lang">
+                <option value="ru">Русский</option>
+                <option value="de">Deutsch</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="footer-action">
+        <button class="btn-build" onclick="buildForGenially()">СГЕНЕРИРОВАТЬ КОД ИГРЫ ДЛЯ GENIALLY</button>
+        
+        <div id="result-box">
+            <p style="color:white; font-weight:900;">СКОПИРУЙТЕ ЭТОТ КОД И ВСТАВЬТЕ В GENIALLY:</p>
+            <div id="code-out"></div>
+            <button class="btn-build" style="background:var(--p); margin-top:20px; font-size:0.8rem; padding:15px;" onclick="copyCode()">КОПИРОВАТЬ КОД</button>
         </div>
     </div>
 </div>
 
 <script>
-    function buildGameCode() {
-        // Собираем данные из полей
-        const data = {
-            lvl: document.getElementById('lvl').value,
-            lives: document.getElementById('lives').value,
-            cats: [
-                {n: document.getElementById('c1-n').value, c: document.getElementById('c1-c').value, w: document.getElementById('c1-w').value},
-                {n: document.getElementById('c2-n').value, c: document.getElementById('c2-c').value, w: document.getElementById('c2-w').value},
-                {n: document.getElementById('c3-n').value, c: document.getElementById('c3-c').value, w: document.getElementById('c3-w').value}
-            ]
+    // Функция перевода файла с компьютера в строку Base64
+    function toBase64(input, targetId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => { document.getElementById(targetId).value = e.target.result; };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function buildForGenially() {
+        // Данные из редактора
+        const cfg = {
+            butterfly: document.getElementById('img-butterfly').value || 'https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Butterfly.png',
+            bee: document.getElementById('img-bee').value || 'https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%97%D0%BB%D0%B0%D1%8F%20%D0%BF%D1%87%D0%B5%D0%BB%D0%B0.png',
+            hero: document.getElementById('img-hero').value || 'https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png',
+            bg: document.getElementById('img-bg').value || 'https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg',
+            beeSnd: document.getElementById('snd-bee').value || '',
+            words: document.getElementById('words-list').value,
+            winTxt: document.getElementById('text-win').value
         };
 
-        // Формируем "Чистый код игры" (движок + данные)
-        const gameHtml = `
+        // Текст САМОЙ ИГРЫ (без редактора)
+        const gameCode = `
 <!DOCTYPE html>
 <html>
 <head>
     <style>
-        body { margin:0; overflow:hidden; font-family: sans-serif; background: url('https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg') center/cover; height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-        #word { background:white; padding:20px 50px; border-radius:50px; border:5px solid ${data.cats[0].c}; font-size:30px; font-weight:900; margin-top:200px; }
-        #artist { position:absolute; bottom:20px; left:20px; width:150px; transition: 0.5s; }
-        #bee { position:absolute; top:20%; left:-100px; width:80px; }
+        body { margin:0; overflow:hidden; background: url('${cfg.bg}') center/cover; height:100vh; font-family:sans-serif; text-align:center; }
+        #obj { position:absolute; top:45%; left:55%; transform:translate(-50%,-50%); width:400px; }
+        #artist { position:absolute; bottom:20px; left:20px; width:150px; transition:0.5s; }
+        #bee { position:absolute; top:20%; left:-150px; width:100px; }
+        #word-plate { background:white; padding:20px; border-radius:30px; border:5px solid #6C5CE7; display:inline-block; margin-top:50px; font-size:30px; font-weight:900; }
         .btns { position:absolute; bottom:30px; right:30px; display:flex; gap:10px; }
-        .btn { padding:15px 30px; border:none; border-radius:10px; color:white; font-weight:bold; cursor:pointer; }
+        .b { padding:15px 30px; border:none; border-radius:10px; color:white; font-weight:bold; cursor:pointer; font-size:1.2rem; }
     </style>
 </head>
 <body>
-    <div id="word">ЗАГРУЗКА...</div>
-    <img id="artist" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png">
-    <img id="bee" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%97%D0%BB%D0%B0%D1%8F%20%D0%BF%D1%87%D0%B5%D0%BB%D0%B0.png">
-    
+    <div id="word-plate">ЗАГРУЗКА...</div>
+    <img id="obj" src="${cfg.butterfly}">
+    <img id="artist" src="${cfg.hero}">
+    <img id="bee" src="${cfg.bee}">
+    <audio id="beeSnd" src="${cfg.beeSnd}"></audio>
     <div class="btns">
-        <button class="btn" style="background:${data.cats[0].c}" onclick="check(0)">${data.cats[0].n}</button>
-        <button class="btn" style="background:${data.cats[1].c}" onclick="check(1)">${data.cats[1].n}</button>
-        <button class="btn" style="background:${data.cats[2].c}" onclick="check(2)">${data.cats[2].n}</button>
+        <button class="b" style="background:#74b9ff" onclick="check('der')">DER</button>
+        <button class="b" style="background:#ff7675" onclick="check('die')">DIE</button>
+        <button class="b" style="background:#55efc4" onclick="check('das')">DAS</button>
     </div>
-
     <script>
-        const words = [
-            {t: '${data.cats[0].w.split(',')[0].trim()}', a: 0},
-            {t: '${data.cats[1].w.split(',')[0].trim()}', a: 1}
-        ];
-        let current = 0;
-        document.getElementById('word').innerText = words[current].t;
+        const words = "${cfg.words}".split(',').map(s => s.trim());
+        let cur = 0;
+        document.getElementById('word-plate').innerText = words[cur];
 
-        function check(idx) {
-            if(idx === words[current].a) {
-                alert('Правильно!');
+        function check(art) {
+            if(words[cur].toLowerCase().startsWith(art)) {
+                cur++;
+                if(cur < words.length) document.getElementById('word-plate').innerText = words[cur];
+                else alert("${cfg.winTxt}");
             } else {
-                const bee = document.getElementById('bee');
-                bee.animate([{left: '-100px'}, {left: '110%'}], {duration: 2000});
+                document.getElementById('beeSnd').play();
+                document.getElementById('bee').animate([{left:'-150px'}, {left:'110%'}], 2000);
                 document.getElementById('artist').style.transform = 'translateX(100px)';
-                setTimeout(()=>document.getElementById('artist').style.transform='translateX(0)', 2000);
+                setTimeout(()=> document.getElementById('artist').style.transform = 'translateX(0)', 2000);
             }
         }
     <\/script>
 </body>
 </html>`;
 
-        // Выводим код для Iframe
-        const finalCode = `<iframe srcdoc='${gameHtml.replace(/'/g, "&#39;")}' width="100%" height="600" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+        // Упаковка в Iframe для Genially
+        const finalIframe = `<iframe srcdoc='${gameCode.replace(/'/g, "&#39;")}' width="1000" height="600" frameborder="0" scrolling="no"></iframe>`;
         
-        document.getElementById('code-res').innerText = finalCode;
-        document.getElementById('output-zone').style.display = 'block';
+        document.getElementById('code-out').innerText = finalIframe;
+        document.getElementById('result-box').style.display = 'block';
     }
 
     function copyCode() {
-        const text = document.getElementById('code-res').innerText;
-        navigator.clipboard.writeText(text);
-        alert('Код для Genially скопирован!');
+        const text = document.getElementById('code-out').innerText;
+        navigator.clipboard.writeText(text).then(() => alert('Код скопирован! Вставьте его в Genially.'));
     }
 </script>
 
