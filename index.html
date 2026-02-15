@@ -2,111 +2,81 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Deutsch interaktiv | Official Editor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Deutsch interaktiv | Simple Editor</title>
     <style>
-        :root { --primary: #6C5CE7; --accent: #FD79A8; --dark: #1a1a2e; }
-        body { font-family: 'Montserrat', sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
-        .wrapper { max-width: 1000px; margin: 0 auto; background: white; border-radius: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background: var(--primary); color: white; padding: 25px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { display: flex; align-items: center; gap: 15px; font-weight: 900; font-size: 20px; }
-        .logo img { width: 45px; height: 45px; background: white; border-radius: 50%; padding: 5px; }
-        .content { padding: 30px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-        .full { grid-column: span 3; }
-        .input-box { background: #f8f9fa; padding: 15px; border-radius: 15px; border: 1px solid #eee; }
-        label { display: block; font-size: 10px; font-weight: 900; color: var(--primary); margin-bottom: 8px; text-transform: uppercase; }
-        input, textarea, select { width: 100%; border: 2px solid #ddd; border-radius: 10px; padding: 10px; font-family: inherit; box-sizing: border-box; }
-        textarea { height: 80px; resize: none; border-bottom: 3px solid var(--primary); }
-        .btn-gen { background: var(--accent); color: white; border: none; padding: 25px; width: calc(100% - 60px); margin: 0 30px 30px; border-radius: 20px; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(253,121,168,0.3); }
-        .btn-gen:hover { transform: scale(1.02); filter: brightness(1.1); }
-        #overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; align-items:center; justify-content:center; }
-        .modal { background: white; padding: 30px; border-radius: 25px; width: 80%; max-width: 700px; text-align: center; }
-        #code-res { background: #222; color: #0f0; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 11px; height: 180px; overflow: auto; word-break: break-all; margin: 20px 0; text-align: left; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 600px; }
+        h1 { color: #6C5CE7; font-size: 20px; margin-bottom: 20px; border-bottom: 2px solid #6C5CE7; padding-bottom: 10px; }
+        label { display: block; margin-top: 15px; font-weight: bold; font-size: 12px; color: #555; }
+        textarea, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        textarea { height: 60px; }
+        .btn { background: #FD79A8; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        #out-area { display: none; margin-top: 20px; }
+        #code { background: #222; color: #0f0; padding: 15px; border-radius: 10px; font-family: monospace; font-size: 11px; word-break: break-all; height: 100px; overflow-y: auto; }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <div class="header">
-        <div class="logo">🎨 Deutsch interaktiv</div>
-        <select id="ui_lang" style="width:140px;">
-            <option value="ru">Русский</option><option value="de">Deutsch</option><option value="en">English</option>
-            <option value="es">Español</option><option value="it">Italiano</option><option value="zh">中文</option>
-        </select>
-    </div>
-    <div class="content">
-        <div class="input-box full"><label>Ссылка на ФОН (GitHub)</label><input type="text" id="g_bg" value="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg"></div>
-        <div class="input-box"><label>Уровень</label><select id="diff"><option value="easy">🦋 Бабочка</option><option value="mid">🌹 Роза</option></select></div>
-        <div class="input-box"><label>Пчела (GitHub)</label><input type="text" id="g_bee" value="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%97%D0%BB%D0%B0%D1%8F%20%D0%BF%D1%87%D0%B5%D0%BB%D0%B0.png"></div>
-        <div class="input-box"><label>Художник (GitHub)</label><input type="text" id="g_art" value="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/%D0%92%D0%B5%D1%81%D1%91%D0%BB%D1%8B%D0%B9%20%D1%85%D1%83%D0%B4%D0%BE%D0%B6%D0%BD%D0%B8%D0%BA.png"></div>
-        
-        <div class="input-box"><label style="color:#3498db">DER</label><textarea id="t_der">Apfel, Hund, Tisch</textarea></div>
-        <div class="input-box"><label style="color:#e74c3c">DIE</label><textarea id="t_die">Lampe, Katze, Sonne</textarea></div>
-        <div class="input-box"><label style="color:#2ecc71">DAS</label><textarea id="t_das">Haus, Buch, Kind</textarea></div>
-    </div>
-    <button class="btn-gen" onclick="build()">СГЕНЕРИРОВАТЬ ИГРУ</button>
-</div>
+<div class="card">
+    <h1>🎨 Deutsch interaktiv: Редактор</h1>
+    
+    <label>Язык интерфейса</label>
+    <select id="lang">
+        <option value="ru">Русский</option><option value="de">Deutsch</option>
+        <option value="en">English</option><option value="es">Español</option>
+        <option value="it">Italiano</option><option value="zh">中文</option>
+    </select>
 
-<div id="overlay">
-    <div class="modal">
-        <h2 style="color:var(--primary)">КОД ГОТОВ!</h2>
-        <div id="code-res"></div>
-        <button class="btn-gen" style="margin:0" onclick="copy()">КОПИРОВАТЬ</button>
-        <p onclick="document.getElementById('overlay').style.display='none'" style="cursor:pointer; color:gray; margin-top:15px">Закрыть</p>
+    <label>Слова DER (через запятую)</label>
+    <textarea id="der">Hund, Tisch, Apfel</textarea>
+
+    <label>Слова DIE (через запятую)</label>
+    <textarea id="die">Katze, Lampe, Sonne</textarea>
+
+    <label>Слова DAS (через запятую)</label>
+    <textarea id="das">Haus, Buch, Kind</textarea>
+
+    <button class="btn" onclick="gen()">СГЕНЕРИРОВАТЬ КОД</button>
+
+    <div id="out-area">
+        <label>Скопируйте этот код в Genially:</label>
+        <div id="code"></div>
+        <button class="btn" style="background:#6C5CE7" onclick="copy()">КОПИРОВАТЬ</button>
     </div>
 </div>
 
 <script>
-    function build() {
-        const bg = document.getElementById('g_bg').value;
-        const art = document.getElementById('g_art').value;
-        const bee = document.getElementById('g_bee').value;
-        const der = document.getElementById('t_der').value;
-        const die = document.getElementById('t_die').value;
-        const das = document.getElementById('t_das').value;
+    function gen() {
+        const der = document.getElementById('der').value;
+        const die = document.getElementById('die').value;
+        const das = document.getElementById('das').value;
 
-        const game = `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
-            body { margin:0; overflow:hidden; font-family:sans-serif; background:url('\${bg}') center/cover; height:100vh; }
-            #w { position:absolute; top:40px; left:50%; transform:translateX(-50%); background:white; padding:15px 40px; border-radius:20px; font-size:30px; font-weight:900; border:4px solid #6C5CE7; z-index:5; }
-            #art { position:absolute; bottom:20px; left:20px; width:150px; transition:0.3s; }
-            #bee { position:absolute; top:-200px; right:50px; width:100px; transition:0.5s; }
-            .cans { position:absolute; right:30px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:15px; }
-            .can { width:80px; cursor:pointer; }
-            #target { position:absolute; top:55%; left:50%; transform:translate(-50%,-50%); width:350px; filter:grayscale(1); transition:1s; }
-        </style></head><body>
-            <div id="w">START</div>
-            <img id="target" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Rose_Path.png">
-            <img id="art" src="\${art}">
-            <img id="bee" src="\${bee}">
-            <div class="cans">
-                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(180deg)" onclick="check('der')">
-                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(300deg)" onclick="check('die')">
-                <img class="can" src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="filter:hue-rotate(100deg)" onclick="check('das')">
+        // Сама игра (максимально легкая)
+        const game = `<!DOCTYPE html><html><body style="margin:0;overflow:hidden;background:url('https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Background_Garden.jpg') center/cover;height:100vh;font-family:sans-serif;text-align:center;">
+            <div id="w" style="display:inline-block;margin-top:40px;background:white;padding:15px 40px;border-radius:20px;font-size:30px;font-weight:900;border:4px solid #6C5CE7;">START</div>
+            <img id="r" src="https://raw.githubusercontent.com/irinschensmagen-alt/Redaktor-/main/Rose_Path.png" style="display:block;margin:40px auto;width:300px;filter:grayscale(1);">
+            <div style="position:absolute;bottom:50px;width:100%;display:flex;justify-content:center;gap:20px;">
+                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(180deg)" onclick="ck('der')">
+                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(300deg)" onclick="ck('die')">
+                <img src="https://cdn-icons-png.flaticon.com/512/4343/4343028.png" style="width:80px;cursor:pointer;filter:hue-rotate(100deg)" onclick="ck('das')">
             </div>
             <script>
                 const data = { der:[\${der.split(',').map(s=>"'"+s.trim()+"'").join(',')}], die:[\${die.split(',').map(s=>"'"+s.trim()+"'").join(',')}], das:[\${das.split(',').map(s=>"'"+s.trim()+"'").join(',')] };
-                let cur = ''; let score = 0;
-                function n() { 
-                    const k = Object.keys(data); cur = k[Math.floor(Math.random()*k.length)];
-                    document.getElementById('w').innerText = data[cur][Math.floor(Math.random()*data[cur].length)];
-                }
-                function check(v) {
-                    if(v === cur) {
-                        score++; document.getElementById('target').style.filter = "grayscale("+(1-score/10)+")";
-                        if(score>=10) { alert('Sensationell!'); location.reload(); } else n();
-                    } else {
-                        document.getElementById('bee').style.top = "100px";
-                        setTimeout(()=> { document.getElementById('bee').style.top = "-200px"; }, 1500);
-                    }
-                }
+                let cur='', sc=0;
+                function n() { const k=Object.keys(data); cur=k[Math.floor(Math.random()*k.length)]; document.getElementById('w').innerText=data[cur][Math.floor(Math.random()*data[cur].length)]; }
+                function ck(v) { if(v===cur){ sc++; document.getElementById('r').style.filter="grayscale("+(1-sc/5)+")"; if(sc>=5){alert('Sensationell!');location.reload();}else n(); } else { alert('Попробуй другую лейку!'); } }
                 n();
             <\/script></body></html>`;
 
-        const finalCode = "<iframe srcdoc='" + game.replace(/'/g, "&#39;") + "' width='100%' height='600' frameborder='0'></iframe>";
-        document.getElementById('code-res').innerText = finalCode;
-        document.getElementById('overlay').style.display = 'flex';
+        const iframe = "<iframe srcdoc='" + game.replace(/'/g, "&#39;") + "' width='100%' height='600' frameborder='0'></iframe>";
+        document.getElementById('code').innerText = iframe;
+        document.getElementById('out-area').style.display = 'block';
     }
-    function copy() { navigator.clipboard.writeText(document.getElementById('code-res').innerText); alert("Код скопирован!"); }
+
+    function copy() {
+        navigator.clipboard.writeText(document.getElementById('code').innerText);
+        alert("Код скопирован!");
+    }
 </script>
 </body>
 </html>
